@@ -3,11 +3,6 @@
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
 
-# Package Files #
-build/*.jar
-build/*.war
-build/*.ear
-
 
 target/
 
@@ -30,17 +25,7 @@ target/
 # mpeltonen/sbt-idea plugin
 /.idea_modules/
 
-# JIRA plugin
-atlassian-ide-plugin.xml
-
-# Crashlytics plugin (for Android Studio and IntelliJ)
-com_crashlytics_export_strings.xml
-crashlytics.properties
-crashlytics-build.properties
-fabric.properties
-
 # Build artifacts
 .gradle
-build
 /classes/
 plugin-dotnet-server/tools/
