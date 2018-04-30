@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<teamcity-plugin xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:schemas-jetbrains-com:teamcity-plugin-v1-xml">
+  <info>
+    <name>codedx-teamcity-plugin</name>
+    <display-name>codedx-teamcity-plugin</display-name>
+    <version>@Version@</version>
+    <description>Plugin description</description>
+    <download-codeDxUrl>Plugin download URL</download-codeDxUrl>
+    <email>Plugin author e-mail</email>
+    <vendor>
+      <name>CodeDx</name>
+      <codeDxUrl>www.codedx.com</codeDxUrl>
+      <logo>Plugin vendor logo URL</logo>
+    </vendor>
+  </info>
+  <deployment use-separate-classloader="true" />
+</teamcity-plugin>

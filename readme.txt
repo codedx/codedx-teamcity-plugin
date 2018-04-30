@@ -1,4 +1,3 @@
-# codedx-teamcity-plugin
 
  TeamCity plugin
 
