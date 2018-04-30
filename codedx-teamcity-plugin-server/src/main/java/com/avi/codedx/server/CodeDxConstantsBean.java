@@ -24,4 +24,7 @@ public class CodeDxConstantsBean {
 
 	@NotNull
 	public String getCodeDxProjectKey() { return CodeDxConstants.SETTNGS_CODEX_PROJECT_KEY; }
+
+	@NotNull
+	public String getServerValidationErrorKey() { return CodeDxConstants.SETTINGS_SERVER_VALIDATION_ERROR_KEY; }
 }

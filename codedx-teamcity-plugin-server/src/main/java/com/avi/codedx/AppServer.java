@@ -2,6 +2,7 @@ package com.avi.codedx;
 
 import com.avi.codedx.server.CodeDxCredentials;
 import io.swagger.client.ApiClient;
+import io.swagger.client.ApiException;
 import io.swagger.client.api.ProjectsApi;
 import io.swagger.client.model.Projects;
 import jetbrains.buildServer.controllers.BaseController;
@@ -36,9 +37,19 @@ public class AppServer extends BaseController {
 		ProjectsApi projectsApi = new ProjectsApi();
 		projectsApi.setApiClient(apiClient);
 
-		Projects projects = projectsApi.getProjects();
-		String projectsJson = mapper.writeValueAsString(projects);
-		httpServletResponse.getOutputStream().print(projectsJson);
+		try {
+			Projects projects = projectsApi.getProjects();
+			String projectsJson = mapper.writeValueAsString(projects);
+			httpServletResponse.getOutputStream().print(projectsJson);
+		} catch (IllegalArgumentException e){
+			// Bad URL?
+			httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+			httpServletResponse.getOutputStream().print(e.getMessage());
+		} catch (ApiException e) {
+			// Bad API Token?
+			httpServletResponse.setStatus(e.getCode());
+			httpServletResponse.getOutputStream().print(e.getMessage());
+		}
 
 		return null;
 	}
