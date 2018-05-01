@@ -1,12 +1,17 @@
 package com.avi.codedx;
 
+import com.intellij.openapi.diagnostic.Logger;
 import io.swagger.client.ApiClient;
 import io.swagger.client.api.AnalysisApi;
 import io.swagger.client.model.AnalysisPrepResponse;
+import io.swagger.client.model.AnalysisQueryResponse;
 import io.swagger.client.model.ProjectId;
 import jetbrains.buildServer.RunBuildException;
 import jetbrains.buildServer.agent.BuildFinishedStatus;
 import jetbrains.buildServer.agent.BuildProcessAdapter;
+import jetbrains.buildServer.agent.BuildProgressLogger;
+import jetbrains.buildServer.agent.BuildRunnerContext;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -14,6 +19,9 @@ import java.util.Iterator;
 import java.util.List;
 
 public class CodeDxBuildProcessAdapter extends BuildProcessAdapter {
+	private static final Logger LOG = Logger.getInstance(CodeDxBuildProcessAdapter.class.getName());
+	private final BuildProgressLogger BUILD_PROGRESS_LOGGER;
+
 	private volatile boolean hasFinished;
 	private volatile BuildFinishedStatus statusCode;
 	private volatile boolean isInterrupted;
@@ -26,12 +34,13 @@ public class CodeDxBuildProcessAdapter extends BuildProcessAdapter {
 
 	private final AnalysisApi analysisApi;
 
-	public CodeDxBuildProcessAdapter(String url, String apiToken, String projectId, String filesToUpload, File workingDirectory) {
+	public CodeDxBuildProcessAdapter(String url, String apiToken, String projectId, String filesToUpload, BuildRunnerContext context) {
 		this.url = url;
 		this.apiToken = apiToken;
 		this.projectId = projectId;
 		this.filesToUpload = filesToUpload;
-		this.workingDirectory = workingDirectory;
+		this.workingDirectory = context.getWorkingDirectory();
+		this.BUILD_PROGRESS_LOGGER = context.getBuild().getBuildLogger();
 
 		ApiClient apiClient = new ApiClient();
 		apiClient.setBasePath(this.url);
@@ -70,8 +79,9 @@ public class CodeDxBuildProcessAdapter extends BuildProcessAdapter {
 		return hasFinished;
 	}
 
-	protected BuildFinishedStatus runProcess() throws RunBuildException {
+	protected BuildFinishedStatus runProcess() {
 		try{
+			boolean notReadyToRunAnalysis = true;
 			ProjectId project = new ProjectId();
 			project.setProjectId(Integer.parseInt(projectId));
 
@@ -85,8 +95,25 @@ public class CodeDxBuildProcessAdapter extends BuildProcessAdapter {
 				analysisApi.uploadFile(analysisPrepId, file, null);
 			}
 
+			// Make sure Code Dx can run the analysis before attempting to run it
+			while(notReadyToRunAnalysis) {
+				AnalysisQueryResponse response = this.analysisApi.queryAnalysisPrepState(analysisPrepId);
+				List<String> inputIds = response.getInputIds();
+				List<String> verificationErrors = response.getVerificationErrors();
+
+				if(inputIds.size() == files.size() && verificationErrors.isEmpty()) {
+					notReadyToRunAnalysis = false;
+				} else if (inputIds.size() == files.size() && !verificationErrors.isEmpty()) {
+					String errorMessage = this.getVerificationErrorMessage(verificationErrors);
+					BUILD_PROGRESS_LOGGER.error(errorMessage);
+					return BuildFinishedStatus.FINISHED_FAILED;
+				}
+			}
+
 			analysisApi.runPreparedAnalysis(analysisPrepId);
 		} catch (Exception e) {
+			BUILD_PROGRESS_LOGGER.error("Error uploading files to Code Dx: " + e.getMessage());
+			LOG.warnAndDebugDetails("Error uploading files to Code Dx", e);
 			return BuildFinishedStatus.FINISHED_FAILED;
 		}
 		return BuildFinishedStatus.FINISHED_SUCCESS;
@@ -124,5 +151,16 @@ public class CodeDxBuildProcessAdapter extends BuildProcessAdapter {
 		}
 
 		return files;
+	}
+
+	@NotNull
+	private String getVerificationErrorMessage(List<String> verificationErrors) {
+		StringBuilder errorMessage = new StringBuilder();
+		errorMessage.append("Code Dx reported verification errors for attempted analysis: \n");
+
+		for(Iterator<String> i = verificationErrors.iterator(); i.hasNext();) {
+			errorMessage.append(i).append("\n");
+		}
+		return errorMessage.toString();
 	}
 }

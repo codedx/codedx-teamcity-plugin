@@ -5,7 +5,6 @@ import jetbrains.buildServer.RunBuildException;
 import jetbrains.buildServer.agent.*;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
 import java.util.Map;
 
 public class CodeDxRunner implements AgentBuildRunner {
@@ -19,9 +18,8 @@ public class CodeDxRunner implements AgentBuildRunner {
 		final String apiToken = parameters.get(CodeDxConstants.SETTINGS_API_TOKEN_KEY);
 		final String projectId = parameters.get(CodeDxConstants.SETTNGS_CODEDX_PROJECT_KEY);
 		final String filesToUpload = parameters.get(CodeDxConstants.SETTINGS_FILES);
-		final File workingDirectory = buildRunnerContext.getWorkingDirectory();
 
-		return new CodeDxBuildProcessAdapter(codeDxUrl, apiToken, projectId, filesToUpload, workingDirectory);
+		return new CodeDxBuildProcessAdapter(codeDxUrl, apiToken, projectId, filesToUpload, buildRunnerContext);
 	}
 
 	@NotNull
