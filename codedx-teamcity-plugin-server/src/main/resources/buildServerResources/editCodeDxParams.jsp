@@ -48,6 +48,17 @@
 			</span>
 		</td>
 	</tr>
+	<tr>
+		<th>
+			<label>Files to Upload:</label>
+		</th>
+		<td>
+			<span>
+				<props:textProperty name="${constants.filesKey}" className="longField"></props:textProperty>
+				<span class="smallNote">Files to upload to Code Dx, comma separated</span>
+			</span>
+		</td>
+	</tr>
 	<script type="text/javascript">
 		function populateProjects(projects) {
 			var $projects = $j(BS.Util.escapeId('${constants.codeDxProjectKey}'));

@@ -7,7 +7,7 @@ public interface CodeDxConstants {
 	String SETTINGS_PROJECT = "codedx.project";
 	String SETTINGS_CODEDX_URL_KEY = "codedx.url";
 	String SETTINGS_API_TOKEN_KEY = "codedx.apiToken";
-	String SETTNGS_CODEX_PROJECT_KEY = "codedx.selectedProject";
+	String SETTNGS_CODEDX_PROJECT_KEY = "codedx.selectedProject";
 	String SETTINGS_SERVER_VALIDATION_ERROR_KEY = "codedx.serverValidationError";
 
 	String RUNNER_DISPLAY_NAME = "Code Dx";

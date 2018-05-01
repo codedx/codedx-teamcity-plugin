@@ -23,7 +23,7 @@ public class CodeDxConstantsBean {
 	public String getCodeDxAPITokenKey() { return  CodeDxConstants.SETTINGS_API_TOKEN_KEY; }
 
 	@NotNull
-	public String getCodeDxProjectKey() { return CodeDxConstants.SETTNGS_CODEX_PROJECT_KEY; }
+	public String getCodeDxProjectKey() { return CodeDxConstants.SETTNGS_CODEDX_PROJECT_KEY; }
 
 	@NotNull
 	public String getServerValidationErrorKey() { return CodeDxConstants.SETTINGS_SERVER_VALIDATION_ERROR_KEY; }
