@@ -18,8 +18,11 @@ public class CodeDxRunner implements AgentBuildRunner {
 		final String apiToken = parameters.get(CodeDxConstants.SETTINGS_API_TOKEN_KEY);
 		final String projectId = parameters.get(CodeDxConstants.SETTNGS_CODEDX_PROJECT_KEY);
 		final String filesToUpload = parameters.get(CodeDxConstants.SETTINGS_FILES);
+		final String severityToBreakBuild = parameters.get(CodeDxConstants.SETTINGS_CODEDX_SEVERITY_KEY);
 
-		return new CodeDxBuildProcessAdapter(codeDxUrl, apiToken, projectId, filesToUpload, buildRunnerContext);
+		CodeDxRunnerSettings settings = new CodeDxRunnerSettings(codeDxUrl, apiToken, projectId, filesToUpload, severityToBreakBuild);
+
+		return new CodeDxBuildProcessAdapter(settings, buildRunnerContext);
 	}
 
 	@NotNull

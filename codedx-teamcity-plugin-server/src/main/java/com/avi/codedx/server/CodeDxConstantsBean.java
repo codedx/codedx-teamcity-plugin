@@ -27,4 +27,7 @@ public class CodeDxConstantsBean {
 
 	@NotNull
 	public String getServerValidationErrorKey() { return CodeDxConstants.SETTINGS_SERVER_VALIDATION_ERROR_KEY; }
+
+	@NotNull
+	public String getCodeDxSeverityKey() {return CodeDxConstants.SETTINGS_CODEDX_SEVERITY_KEY; }
 }

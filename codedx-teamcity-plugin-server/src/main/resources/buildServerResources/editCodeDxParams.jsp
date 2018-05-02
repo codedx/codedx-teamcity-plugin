@@ -55,13 +55,30 @@
 		<td>
 			<span>
 				<props:textProperty name="${constants.filesKey}" className="longField"></props:textProperty>
-				<span class="smallNote">Files to upload to Code Dx, comma separated</span>
+				<span class="smallNote">Files relative to the working directory to upload to Code Dx. Separate multiple files with a comma (,)</span>
+			</span>
+		</td>
+	</tr>
+	<tr>
+		<th>
+			<label>Fail Build on Severity:</label>
+		</th>
+		<td>
+			<span>
+				<props:selectProperty name="${constants.codeDxSeverityKey}" className="mediumField">
+					<props:option value="None"><c:out value="None"/></props:option>
+					<props:option value="Critical"><c:out value="Critical"/></props:option>
+					<props:option value="High"><c:out value="High"/></props:option>
+					<props:option value="Medium"><c:out value="Medium"/></props:option>
+					<props:option value="Low"><c:out value="Low"/></props:option>
+				</props:selectProperty>
 			</span>
 		</td>
 	</tr>
 	<script type="text/javascript">
 		function populateProjects(projects) {
 			var $projects = $j(BS.Util.escapeId('${constants.codeDxProjectKey}'));
+			$projects.empty();
 			projects.forEach(function(project) {
 				$projects.append($j('<option>', {
 					value: project.id,

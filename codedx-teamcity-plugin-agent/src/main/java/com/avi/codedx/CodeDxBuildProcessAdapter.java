@@ -2,10 +2,11 @@ package com.avi.codedx;
 
 import com.intellij.openapi.diagnostic.Logger;
 import io.swagger.client.ApiClient;
+import io.swagger.client.ApiException;
 import io.swagger.client.api.AnalysisApi;
-import io.swagger.client.model.AnalysisPrepResponse;
-import io.swagger.client.model.AnalysisQueryResponse;
-import io.swagger.client.model.ProjectId;
+import io.swagger.client.api.FindingDataApi;
+import io.swagger.client.api.JobsApi;
+import io.swagger.client.model.*;
 import jetbrains.buildServer.RunBuildException;
 import jetbrains.buildServer.agent.BuildFinishedStatus;
 import jetbrains.buildServer.agent.BuildProcessAdapter;
@@ -14,7 +15,7 @@ import jetbrains.buildServer.agent.BuildRunnerContext;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
-import java.util.ArrayList;
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 
@@ -26,47 +27,22 @@ public class CodeDxBuildProcessAdapter extends BuildProcessAdapter {
 	private volatile BuildFinishedStatus statusCode;
 	private volatile boolean isInterrupted;
 
-	private final String url;
-	private final String apiToken;
-	private final String projectId;
-	private final String filesToUpload;
-	private final File workingDirectory;
+	private final CodeDxRunnerSettings settings;
+	private final List<File> filesToUpload;
 
 	private final AnalysisApi analysisApi;
 
-	public CodeDxBuildProcessAdapter(String url, String apiToken, String projectId, String filesToUpload, BuildRunnerContext context) {
-		this.url = url;
-		this.apiToken = apiToken;
-		this.projectId = projectId;
-		this.filesToUpload = filesToUpload;
-		this.workingDirectory = context.getWorkingDirectory();
+	public CodeDxBuildProcessAdapter(CodeDxRunnerSettings settings, BuildRunnerContext context) {
+		this.settings = settings;
+		this.filesToUpload = this.settings.getFilesToUpload(context.getWorkingDirectory());
 		this.BUILD_PROGRESS_LOGGER = context.getBuild().getBuildLogger();
 
 		ApiClient apiClient = new ApiClient();
-		apiClient.setBasePath(this.url);
-		apiClient.setApiKey(apiToken);
+		apiClient.setBasePath(this.settings.getUrl());
+		apiClient.setApiKey(this.settings.getApiToken());
 
-		analysisApi = new AnalysisApi();
-		analysisApi.setApiClient(apiClient);
-	}
-
-	public String getUrl() {
-		return this.url;
-	}
-
-	public String getApiToken() {
-		return this.apiToken;
-	}
-
-	public String getProjectId() {
-		return this.projectId;
-	}
-
-	/*
-	Files are comma separated
-	 */
-	public String getFilesToUpload() {
-		return this.filesToUpload;
+		this.analysisApi = new AnalysisApi();
+		this.analysisApi.setApiClient(apiClient);
 	}
 
 	@Override
@@ -82,19 +58,8 @@ public class CodeDxBuildProcessAdapter extends BuildProcessAdapter {
 	protected BuildFinishedStatus runProcess() {
 		try{
 			boolean readyToRunAnalysis = false;
-			ProjectId project = new ProjectId();
-			project.setProjectId(Integer.parseInt(projectId));
 
-			List<File> files = this.getFiles();
-
-			AnalysisPrepResponse analysisPrep = this.analysisApi.createAnalysisPrep(project);
-			String analysisPrepId = analysisPrep.getPrepId();
-
-			for (Iterator<File> i = files.iterator(); i.hasNext();) {
-				File file = i.next();
-				BUILD_PROGRESS_LOGGER.message("Uploading file: " + file.getCanonicalPath());
-				analysisApi.uploadFile(analysisPrepId, file, null);
-			}
+			String analysisPrepId = this.uploadFiles();
 
 			// Make sure Code Dx can run the analysis before attempting to run it
 			while(!readyToRunAnalysis) {
@@ -104,23 +69,22 @@ public class CodeDxBuildProcessAdapter extends BuildProcessAdapter {
 				List<String> inputIds = response.getInputIds();
 				List<String> verificationErrors = response.getVerificationErrors();
 
-				if(inputIds.size() == files.size() && verificationErrors.isEmpty()) {
+				if(inputIds.size() == this.filesToUpload.size() && verificationErrors.isEmpty()) {
 					readyToRunAnalysis = true;
-				} else if (inputIds.size() == files.size() && !verificationErrors.isEmpty()) {
+				} else if (inputIds.size() == this.filesToUpload.size() && !verificationErrors.isEmpty()) {
 					String errorMessage = this.getVerificationErrorMessage(verificationErrors);
 					BUILD_PROGRESS_LOGGER.error(errorMessage);
 					return BuildFinishedStatus.FINISHED_FAILED;
 				}
 			}
 
-			BUILD_PROGRESS_LOGGER.message("Running Code Dx analysis");
-			analysisApi.runPreparedAnalysis(analysisPrepId);
+			String jobId = this.runAnalysis(analysisPrepId);
+			return this.getAnalysisResults(jobId);
 		} catch (Exception e) {
-			BUILD_PROGRESS_LOGGER.error("Error uploading files to Code Dx: " + e.getMessage());
-			LOG.warnAndDebugDetails("Error uploading files to Code Dx", e);
+			BUILD_PROGRESS_LOGGER.error("An error occurred while attempting to run an analysis: " + e.getMessage());
+			LOG.warnAndDebugDetails("An error occurred while attempting to run an analysis: ", e);
 			return BuildFinishedStatus.FINISHED_FAILED;
 		}
-		return BuildFinishedStatus.FINISHED_SUCCESS;
 	}
 
 	@Override
@@ -145,18 +109,6 @@ public class CodeDxBuildProcessAdapter extends BuildProcessAdapter {
 		return hasFinished ? statusCode : BuildFinishedStatus.INTERRUPTED;
 	}
 
-	private List<File> getFiles(){
-		ArrayList<File> files = new ArrayList<File>();
-		String[] fileNames = this.filesToUpload.split(",");
-
-		for(int i = 0; i < fileNames.length; i++) {
-			String filename = fileNames[i].trim();
-			files.add(new File(workingDirectory, filename));
-		}
-
-		return files;
-	}
-
 	@NotNull
 	private String getVerificationErrorMessage(List<String> verificationErrors) {
 		StringBuilder errorMessage = new StringBuilder();
@@ -166,5 +118,79 @@ public class CodeDxBuildProcessAdapter extends BuildProcessAdapter {
 			errorMessage.append(i).append("\n");
 		}
 		return errorMessage.toString();
+	}
+
+	private String uploadFiles() throws ApiException, IOException {
+		ProjectId project = this.settings.getProjectId();
+
+		AnalysisPrepResponse analysisPrep = this.analysisApi.createAnalysisPrep(project);
+		String analysisPrepId = analysisPrep.getPrepId();
+
+		for (Iterator<File> i = this.filesToUpload.iterator(); i.hasNext();) {
+			File file = i.next();
+			BUILD_PROGRESS_LOGGER.message("Uploading file: " + file.getCanonicalPath());
+			analysisApi.uploadFile(analysisPrepId, file, null);
+		}
+
+		return analysisPrepId;
+	}
+
+	private String runAnalysis(String analysisPrepId) throws ApiException, InterruptedException {
+		BUILD_PROGRESS_LOGGER.message("Running Code Dx analysis");
+		Analysis analysis = analysisApi.runPreparedAnalysis(analysisPrepId);
+		return analysis.getJobId();
+	}
+
+	private BuildFinishedStatus getAnalysisResults(String jobId) throws ApiException, InterruptedException {
+		String severityToBreakBuild = this.settings.getSeverityToBreakBuild();
+
+		if (severityToBreakBuild.equals("None")) {
+			return BuildFinishedStatus.FINISHED_SUCCESS;
+		}
+
+		BUILD_PROGRESS_LOGGER.message("Waiting for Code Dx analysis results");
+
+		boolean isAnalysisFinished = false;
+		JobsApi jobsApi = new JobsApi();
+		jobsApi.setApiClient(this.analysisApi.getApiClient());
+
+		while(!isAnalysisFinished) {
+			Thread.sleep(5000);
+
+			Job job = jobsApi.getJobStatus(jobId);
+			JobStatus status = job.getStatus();
+
+			if (status == JobStatus.COMPLETED) {
+				isAnalysisFinished = true;
+			} else if(status == JobStatus.FAILED) {
+				BUILD_PROGRESS_LOGGER.error("The Code Dx analysis has reported a failure");
+				return BuildFinishedStatus.FINISHED_WITH_PROBLEMS;
+			}
+		}
+
+		FindingDataApi findingDataApi = new FindingDataApi();
+		findingDataApi.setApiClient(this.analysisApi.getApiClient());
+
+		int projectId = this.settings.getProjectId().getProjectId();
+		Query query = new Query();
+		Sort sort = new Sort();
+		Pagination pagination = new Pagination();
+
+		Filter filter = new Filter();
+		filter.put("status", "new");
+		filter.put("severity", severityToBreakBuild);
+
+		query.setFilter(filter);
+		query.setPagination(pagination);
+		query.setSort(sort);
+
+		Count count = findingDataApi.getFindingsCount(projectId, query);
+
+		if (count.getCount() > 0){
+			BUILD_PROGRESS_LOGGER.warning("Code Dx has reported new findings with a severity level of " + severityToBreakBuild);
+			return BuildFinishedStatus.FINISHED_FAILED;
+		} else {
+			return BuildFinishedStatus.FINISHED_SUCCESS;
+		}
 	}
 }
