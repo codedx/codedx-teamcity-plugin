@@ -81,7 +81,7 @@ public class CodeDxBuildProcessAdapter extends BuildProcessAdapter {
 
 	protected BuildFinishedStatus runProcess() {
 		try{
-			boolean notReadyToRunAnalysis = true;
+			boolean readyToRunAnalysis = false;
 			ProjectId project = new ProjectId();
 			project.setProjectId(Integer.parseInt(projectId));
 
@@ -92,17 +92,20 @@ public class CodeDxBuildProcessAdapter extends BuildProcessAdapter {
 
 			for (Iterator<File> i = files.iterator(); i.hasNext();) {
 				File file = i.next();
+				BUILD_PROGRESS_LOGGER.message("Uploading file: " + file.getCanonicalPath());
 				analysisApi.uploadFile(analysisPrepId, file, null);
 			}
 
 			// Make sure Code Dx can run the analysis before attempting to run it
-			while(notReadyToRunAnalysis) {
+			while(!readyToRunAnalysis) {
+				Thread.sleep(1000);
+
 				AnalysisQueryResponse response = this.analysisApi.queryAnalysisPrepState(analysisPrepId);
 				List<String> inputIds = response.getInputIds();
 				List<String> verificationErrors = response.getVerificationErrors();
 
 				if(inputIds.size() == files.size() && verificationErrors.isEmpty()) {
-					notReadyToRunAnalysis = false;
+					readyToRunAnalysis = true;
 				} else if (inputIds.size() == files.size() && !verificationErrors.isEmpty()) {
 					String errorMessage = this.getVerificationErrorMessage(verificationErrors);
 					BUILD_PROGRESS_LOGGER.error(errorMessage);
@@ -110,6 +113,7 @@ public class CodeDxBuildProcessAdapter extends BuildProcessAdapter {
 				}
 			}
 
+			BUILD_PROGRESS_LOGGER.message("Running Code Dx analysis");
 			analysisApi.runPreparedAnalysis(analysisPrepId);
 		} catch (Exception e) {
 			BUILD_PROGRESS_LOGGER.error("Error uploading files to Code Dx: " + e.getMessage());
