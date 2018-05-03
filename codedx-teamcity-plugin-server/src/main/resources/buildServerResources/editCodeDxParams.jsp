@@ -41,10 +41,10 @@
 		</th>
 		<td>
 			<span>
-				<props:selectProperty name="${constants.codeDxProjectKey}" className="mediumField"></props:selectProperty>
-				<div id="selected-project-id" class="hidden">
-					<props:displayValue name="${constants.codeDxProjectKey}"/>
-				</div>
+			<div id="selected-project-id" class="hidden">
+				<props:displayValue name="${constants.codeDxProjectKey}"/>
+			</div>
+				<props:selectProperty name="${constants.codeDxProjectKey}" className="mediumField" enableFilter="true"></props:selectProperty>
 			</span>
 		</td>
 	</tr>
@@ -131,9 +131,15 @@
 					if (isPageLoading) {
 						var selectedProjectId = $j('#selected-project-id').find('strong').text();
 						if (selectedProjectId) {
-							$j(BS.Util.escapeId('${constants.codeDxProjectKey}') + ' option[value="' + selectedProjectId + '"]').prop('selected', true);
+							var $projectInput = $j('#-ufd-teamcity-ui-codedx.selectedProject');
+							var $selectedOption = $j(BS.Util.escapeId('${constants.codeDxProjectKey}') + ' option[value="' + selectedProjectId + '"]');
+							var selectedText = $selectedOption.text();
+
+							$projectInput.val(selectedText);
+							$selectedOption.prop('selected', true);
 						}
 					}
+					BS.enableJQueryDropDownFilter('codedx.selectedProject', {});
 				},
 				error: function(jqXHR, textStatus, errorThrown) {
 					if (jqXHR.status === 400) {
