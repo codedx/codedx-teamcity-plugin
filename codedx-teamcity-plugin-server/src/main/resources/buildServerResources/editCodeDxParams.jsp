@@ -73,6 +73,15 @@
 					<props:option value="Low"><c:out value="Low"/></props:option>
 				</props:selectProperty>
 			</span>
+			<span>
+		</td>
+	</tr>
+	<tr>
+		<th>
+			<label for="${constants.onlyNewFindingsKey}">Only fail on new findings:</label>
+		</th>
+		<td>
+			<props:checkboxProperty name="${constants.onlyNewFindingsKey}"/>
 		</td>
 	</tr>
 	<script type="text/javascript">

@@ -177,7 +177,9 @@ public class CodeDxBuildProcessAdapter extends BuildProcessAdapter {
 		Pagination pagination = new Pagination();
 
 		Filter filter = new Filter();
-		filter.put("status", "new");
+		if (settings.onlyFailOnNewFindings()) {
+			filter.put("status", "new");
+		}
 		filter.put("severity", severityToBreakBuild);
 
 		query.setFilter(filter);
@@ -187,7 +189,7 @@ public class CodeDxBuildProcessAdapter extends BuildProcessAdapter {
 		Count count = findingDataApi.getFindingsCount(projectId, query);
 
 		if (count.getCount() > 0){
-			BUILD_PROGRESS_LOGGER.warning("Code Dx has reported new findings with a severity level of " + severityToBreakBuild);
+			BUILD_PROGRESS_LOGGER.warning("Code Dx has reported " + count.getCount() + " findings with a severity level of " + severityToBreakBuild);
 			return BuildFinishedStatus.FINISHED_FAILED;
 		} else {
 			return BuildFinishedStatus.FINISHED_SUCCESS;

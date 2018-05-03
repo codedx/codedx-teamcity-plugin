@@ -20,14 +20,27 @@ public class CodeDxConstantsBean {
 	}
 
 	@NotNull
-	public String getCodeDxAPITokenKey() { return  CodeDxConstants.SETTINGS_API_TOKEN_KEY; }
+	public String getCodeDxAPITokenKey() {
+		return  CodeDxConstants.SETTINGS_API_TOKEN_KEY;
+	}
 
 	@NotNull
-	public String getCodeDxProjectKey() { return CodeDxConstants.SETTNGS_CODEDX_PROJECT_KEY; }
+	public String getCodeDxProjectKey() {
+		return CodeDxConstants.SETTNGS_CODEDX_PROJECT_KEY;
+	}
 
 	@NotNull
-	public String getServerValidationErrorKey() { return CodeDxConstants.SETTINGS_SERVER_VALIDATION_ERROR_KEY; }
+	public String getServerValidationErrorKey() {
+		return CodeDxConstants.SETTINGS_SERVER_VALIDATION_ERROR_KEY;
+	}
 
 	@NotNull
-	public String getCodeDxSeverityKey() {return CodeDxConstants.SETTINGS_CODEDX_SEVERITY_KEY; }
+	public String getCodeDxSeverityKey() {
+		return CodeDxConstants.SETTINGS_CODEDX_SEVERITY_KEY;
+	}
+
+	@NotNull
+	public String getOnlyNewFindingsKey() {
+		return CodeDxConstants.SETTINGS_ONLY_NEW_FINDINGS_KEY;
+	}
 }

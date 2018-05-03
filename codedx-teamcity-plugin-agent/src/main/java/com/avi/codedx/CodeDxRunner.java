@@ -19,8 +19,9 @@ public class CodeDxRunner implements AgentBuildRunner {
 		final String projectId = parameters.get(CodeDxConstants.SETTNGS_CODEDX_PROJECT_KEY);
 		final String filesToUpload = parameters.get(CodeDxConstants.SETTINGS_FILES);
 		final String severityToBreakBuild = parameters.get(CodeDxConstants.SETTINGS_CODEDX_SEVERITY_KEY);
+		final String onlyFailOnNewFindings = parameters.get(CodeDxConstants.SETTINGS_ONLY_NEW_FINDINGS_KEY);
 
-		CodeDxRunnerSettings settings = new CodeDxRunnerSettings(codeDxUrl, apiToken, projectId, filesToUpload, severityToBreakBuild);
+		CodeDxRunnerSettings settings = new CodeDxRunnerSettings(codeDxUrl, apiToken, projectId, filesToUpload, severityToBreakBuild, onlyFailOnNewFindings);
 
 		return new CodeDxBuildProcessAdapter(settings, buildRunnerContext);
 	}

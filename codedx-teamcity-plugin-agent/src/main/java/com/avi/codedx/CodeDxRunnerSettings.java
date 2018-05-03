@@ -12,13 +12,15 @@ class CodeDxRunnerSettings {
 	private final String projectId;
 	private final String filesToUpload;
 	private final String severityToBreakBuild;
+	private final String onlyFailOnNewFindings;
 
-	public CodeDxRunnerSettings(String url, String apiToken, String projectId, String filesToUpload, String severityToBreakBuild) {
+	public CodeDxRunnerSettings(String url, String apiToken, String projectId, String filesToUpload, String severityToBreakBuild, String onlyFailOnNewFindings) {
 		this.url = url;
 		this.apiToken = apiToken;
 		this.projectId = projectId;
 		this.filesToUpload = filesToUpload;
 		this.severityToBreakBuild = severityToBreakBuild;
+		this.onlyFailOnNewFindings = onlyFailOnNewFindings;
 	}
 
 	public String getUrl() {
@@ -49,5 +51,9 @@ class CodeDxRunnerSettings {
 
 	public String getSeverityToBreakBuild(){
 		return this.severityToBreakBuild;
+	}
+
+	public boolean onlyFailOnNewFindings() {
+		return onlyFailOnNewFindings != null && onlyFailOnNewFindings.equals("true");
 	}
 }
