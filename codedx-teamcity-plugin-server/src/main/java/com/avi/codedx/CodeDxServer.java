@@ -16,11 +16,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class AppServer extends BaseController {
+public class CodeDxServer extends BaseController {
 	private PluginDescriptor myDescriptor;
 	protected final ObjectMapper mapper = new ObjectMapper();
 
-	public AppServer (WebControllerManager manager, PluginDescriptor descriptor) {
+	public CodeDxServer(WebControllerManager manager, PluginDescriptor descriptor) {
 		manager.registerController("/codedx.html",this);
 		myDescriptor=descriptor;
 	}
