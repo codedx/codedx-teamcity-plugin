@@ -76,10 +76,15 @@
 		</td>
 	</tr>
 	<script type="text/javascript">
-		function populateProjects(projects) {
+		function populateProjects(projectList) {
 			var $projects = $j(BS.Util.escapeId('${constants.codeDxProjectKey}'));
 			$projects.empty();
-			projects.forEach(function(project) {
+
+			projectList.sort((a,b) => {
+				return a.name.localeCompare(b.name)
+			})
+
+			projectList.forEach(function(project) {
 				$projects.append($j('<option>', {
 					value: project.id,
 					text: project.name
