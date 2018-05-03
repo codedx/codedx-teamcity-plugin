@@ -44,7 +44,7 @@ public class CodeDxServer extends BaseController {
 		} catch (IllegalArgumentException e){
 			// Bad URL?
 			httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-			httpServletResponse.getOutputStream().print(e.getMessage());
+			httpServletResponse.getOutputStream().print("The URL supplied is invalid");
 		} catch (ApiException e) {
 			// Bad API Token?
 			httpServletResponse.setStatus(e.getCode());
