@@ -148,9 +148,9 @@
 				},
 				error: function(jqXHR, textStatus, errorThrown) {
 					if (jqXHR.status === 400) {
-						$serverError.text(jqXHR.responseText);
+						$urlError.text(jqXHR.responseText);
 					} else if (jqXHR.status === 403) {
-						$serverError.text('API token does not have permission to access Code Dx projects');
+						$apiTokenError.text('API token does not have permission to access Code Dx projects');
 					}
 				}
 			});
