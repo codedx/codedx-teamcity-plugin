@@ -57,7 +57,7 @@
       <dependency>
           <groupId>io.swagger.client</groupId>
           <artifactId>swagger-java-client</artifactId>
-          <version>3.0</version>
+          <version>3.0.x</version>
       </dependency>
   </dependencies>
 </project>
