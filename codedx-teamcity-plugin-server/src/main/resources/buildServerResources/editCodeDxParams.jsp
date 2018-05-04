@@ -84,6 +84,14 @@
 			<props:checkboxProperty name="${constants.onlyNewFindingsKey}"/>
 		</td>
 	</tr>
+	<tr>
+		<th>
+			<label>Analysis Name:</label>
+		</th>
+		<td>
+			<props:textProperty name="${constants.analysisNameKey}" className="longField"></props:textProperty>
+		</td>
+	</tr>
 	<script type="text/javascript">
 		function populateProjects(projectList) {
 			var $projects = $j(BS.Util.escapeId('${constants.codeDxProjectKey}'));

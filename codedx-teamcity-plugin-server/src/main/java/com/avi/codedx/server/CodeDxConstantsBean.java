@@ -26,7 +26,7 @@ public class CodeDxConstantsBean {
 
 	@NotNull
 	public String getCodeDxProjectKey() {
-		return CodeDxConstants.SETTNGS_CODEDX_PROJECT_KEY;
+		return CodeDxConstants.SETTINGS_CODEDX_PROJECT_KEY;
 	}
 
 	@NotNull
@@ -42,5 +42,10 @@ public class CodeDxConstantsBean {
 	@NotNull
 	public String getOnlyNewFindingsKey() {
 		return CodeDxConstants.SETTINGS_ONLY_NEW_FINDINGS_KEY;
+	}
+
+	@NotNull
+	public String getAnalysisNameKey() {
+		return CodeDxConstants.SETTINGS_ANALYSIS_NAME_KEY;
 	}
 }

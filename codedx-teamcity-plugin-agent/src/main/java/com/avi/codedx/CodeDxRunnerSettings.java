@@ -13,14 +13,22 @@ class CodeDxRunnerSettings {
 	private final String filesToUpload;
 	private final String severityToBreakBuild;
 	private final String onlyFailOnNewFindings;
+	private final String analysisName;
 
-	public CodeDxRunnerSettings(String url, String apiToken, String projectId, String filesToUpload, String severityToBreakBuild, String onlyFailOnNewFindings) {
+	public CodeDxRunnerSettings(String url,
+	                            String apiToken,
+	                            String projectId,
+	                            String filesToUpload,
+	                            String severityToBreakBuild,
+	                            String onlyFailOnNewFindings,
+	                            String analysisName) {
 		this.url = url;
 		this.apiToken = apiToken;
 		this.projectId = projectId;
 		this.filesToUpload = filesToUpload;
 		this.severityToBreakBuild = severityToBreakBuild;
 		this.onlyFailOnNewFindings = onlyFailOnNewFindings;
+		this.analysisName = analysisName;
 	}
 
 	public String getUrl() {
@@ -54,6 +62,10 @@ class CodeDxRunnerSettings {
 	}
 
 	public boolean onlyFailOnNewFindings() {
-		return onlyFailOnNewFindings != null && onlyFailOnNewFindings.equals("true");
+		return this.onlyFailOnNewFindings != null && this.onlyFailOnNewFindings.equals("true");
+	}
+
+	public String getAnalysisName() {
+		return this.analysisName;
 	}
 }
