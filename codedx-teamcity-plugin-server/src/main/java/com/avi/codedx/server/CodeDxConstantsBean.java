@@ -48,4 +48,14 @@ public class CodeDxConstantsBean {
 	public String getAnalysisNameKey() {
 		return CodeDxConstants.SETTINGS_ANALYSIS_NAME_KEY;
 	}
+
+	@NotNull
+	public String getToolOutputFilesKey() {
+		return CodeDxConstants.SETTINGS_TOOL_OUTPUT_FILES_KEY;
+	}
+
+	@NotNull
+	public String getFilesExcludedKey() {
+		return CodeDxConstants.SETTINGS_FILES_EXCLUDED_KEY;
+	}
 }

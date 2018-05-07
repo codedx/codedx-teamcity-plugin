@@ -3,6 +3,7 @@ package com.avi.codedx;
 import io.swagger.client.model.ProjectId;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,24 +12,30 @@ class CodeDxRunnerSettings {
 	private final String apiToken;
 	private final String projectId;
 	private final String filesToUpload;
+	private final String filesToExclude;
 	private final String severityToBreakBuild;
 	private final String onlyFailOnNewFindings;
 	private final String analysisName;
+	private final String toolOutputFiles;
 
 	public CodeDxRunnerSettings(String url,
 	                            String apiToken,
 	                            String projectId,
 	                            String filesToUpload,
+	                            String filesToExclude,
 	                            String severityToBreakBuild,
 	                            String onlyFailOnNewFindings,
-	                            String analysisName) {
+	                            String analysisName,
+	                            String toolOutputFiles) {
 		this.url = url;
 		this.apiToken = apiToken;
 		this.projectId = projectId;
 		this.filesToUpload = filesToUpload;
+		this.filesToExclude = filesToExclude;
 		this.severityToBreakBuild = severityToBreakBuild;
 		this.onlyFailOnNewFindings = onlyFailOnNewFindings;
 		this.analysisName = analysisName;
+		this.toolOutputFiles = toolOutputFiles;
 	}
 
 	public String getUrl() {
@@ -45,13 +52,17 @@ class CodeDxRunnerSettings {
 		return project;
 	}
 
-	public List<File> getFilesToUpload(File workingDirectory) {
-		ArrayList<File> files = new ArrayList<File>();
-		String[] fileNames = this.filesToUpload.split(",");
+	public List<File> getFilesToUpload(File workingDirectory) throws IOException {
+		ArrayList<File> files = new ArrayList<>();
+		File zip = Archiver.archive(workingDirectory, this.filesToUpload, this.filesToExclude, "SourceAndBinariesZip");
+		files.add(zip);
 
-		for(int i = 0; i < fileNames.length; i++) {
-			String filename = fileNames[i].trim();
-			files.add(new File(workingDirectory, filename));
+		if (toolOutputFiles != null) {
+			String[] toolOutputFileNames = this.toolOutputFiles.split(",");
+			for (int i = 0; i < toolOutputFileNames.length; i++) {
+				String filename = toolOutputFileNames[i].trim();
+				files.add(new File(workingDirectory, filename));
+			}
 		}
 
 		return files;

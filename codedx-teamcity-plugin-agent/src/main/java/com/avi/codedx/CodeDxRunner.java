@@ -21,8 +21,18 @@ public class CodeDxRunner implements AgentBuildRunner {
 		final String severityToBreakBuild = parameters.get(CodeDxConstants.SETTINGS_CODEDX_SEVERITY_KEY);
 		final String onlyFailOnNewFindings = parameters.get(CodeDxConstants.SETTINGS_ONLY_NEW_FINDINGS_KEY);
 		final String analysisName = parameters.get(CodeDxConstants.SETTINGS_ANALYSIS_NAME_KEY);
+		final String toolOutputFiles = parameters.get(CodeDxConstants.SETTINGS_TOOL_OUTPUT_FILES_KEY);
+		final String filesToExclude = parameters.get(CodeDxConstants.SETTINGS_FILES_EXCLUDED_KEY);
 
-		CodeDxRunnerSettings settings = new CodeDxRunnerSettings(codeDxUrl, apiToken, projectId, filesToUpload, severityToBreakBuild, onlyFailOnNewFindings, analysisName);
+		CodeDxRunnerSettings settings = new CodeDxRunnerSettings(codeDxUrl,
+			apiToken,
+			projectId,
+			filesToUpload,
+			filesToExclude,
+			severityToBreakBuild,
+			onlyFailOnNewFindings,
+			analysisName,
+			toolOutputFiles);
 
 		return new CodeDxBuildProcessAdapter(settings, buildRunnerContext);
 	}

@@ -16,7 +16,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.List;
 
 public class CodeDxBuildProcessAdapter extends BuildProcessAdapter {
@@ -28,14 +27,14 @@ public class CodeDxBuildProcessAdapter extends BuildProcessAdapter {
 	private volatile boolean isInterrupted;
 
 	private final CodeDxRunnerSettings settings;
-	private final List<File> filesToUpload;
+	private final BuildRunnerContext context;
 
 	private final AnalysisApi analysisApi;
 
 	public CodeDxBuildProcessAdapter(CodeDxRunnerSettings settings, BuildRunnerContext context) {
 		this.settings = settings;
-		this.filesToUpload = this.settings.getFilesToUpload(context.getWorkingDirectory());
 		this.BUILD_PROGRESS_LOGGER = context.getBuild().getBuildLogger();
+		this.context = context;
 
 		ApiClient apiClient = new ApiClient();
 		apiClient.setBasePath(this.settings.getUrl());
@@ -58,8 +57,9 @@ public class CodeDxBuildProcessAdapter extends BuildProcessAdapter {
 	protected BuildFinishedStatus runProcess() {
 		try{
 			boolean readyToRunAnalysis = false;
+			List<File> filesToUpload = this.settings.getFilesToUpload(context.getWorkingDirectory());
 
-			String analysisPrepId = this.uploadFiles();
+			String analysisPrepId = this.uploadFiles(filesToUpload);
 
 			// Make sure Code Dx can run the analysis before attempting to run it
 			while(!readyToRunAnalysis) {
@@ -69,9 +69,9 @@ public class CodeDxBuildProcessAdapter extends BuildProcessAdapter {
 				List<String> inputIds = response.getInputIds();
 				List<String> verificationErrors = response.getVerificationErrors();
 
-				if(inputIds.size() == this.filesToUpload.size() && verificationErrors.isEmpty()) {
+				if(inputIds.size() == filesToUpload.size() && verificationErrors.isEmpty()) {
 					readyToRunAnalysis = true;
-				} else if (inputIds.size() == this.filesToUpload.size() && !verificationErrors.isEmpty()) {
+				} else if (inputIds.size() == filesToUpload.size() && !verificationErrors.isEmpty()) {
 					String errorMessage = this.getVerificationErrorMessage(verificationErrors);
 					BUILD_PROGRESS_LOGGER.error(errorMessage);
 					return BuildFinishedStatus.FINISHED_FAILED;
@@ -114,20 +114,19 @@ public class CodeDxBuildProcessAdapter extends BuildProcessAdapter {
 		StringBuilder errorMessage = new StringBuilder();
 		errorMessage.append("Code Dx reported verification errors for attempted analysis: \n");
 
-		for(Iterator<String> i = verificationErrors.iterator(); i.hasNext();) {
-			errorMessage.append(i).append("\n");
+		for(String error : verificationErrors) {
+			errorMessage.append(error).append("\n");
 		}
 		return errorMessage.toString();
 	}
 
-	private String uploadFiles() throws ApiException, IOException {
+	private String uploadFiles(List<File> files) throws ApiException, IOException {
 		ProjectId project = this.settings.getProjectId();
 
 		AnalysisPrepResponse analysisPrep = this.analysisApi.createAnalysisPrep(project);
 		String analysisPrepId = analysisPrep.getPrepId();
 
-		for (Iterator<File> i = this.filesToUpload.iterator(); i.hasNext();) {
-			File file = i.next();
+		for (File file : files) {
 			BUILD_PROGRESS_LOGGER.message("Uploading file: " + file.getCanonicalPath());
 			analysisApi.uploadFile(analysisPrepId, file, null);
 		}

@@ -22,7 +22,7 @@
 	</tr>
 	<tr>
 		<th>
-			<label>API Token:</label>
+			<label>API token:</label>
 		</th>
 		<td>
 			<span>
@@ -50,18 +50,40 @@
 	</tr>
 	<tr>
 		<th>
-			<label>Files to Upload:</label>
+			<label>Source and binaries:</label>
 		</th>
 		<td>
 			<span>
 				<props:textProperty name="${constants.filesKey}" className="longField"></props:textProperty>
-				<span class="smallNote">Files relative to the working directory to upload to Code Dx. Separate multiple files with a comma (,)</span>
+				<span class="smallNote">Files relative to the working directory to zip and upload to Code Dx. Separate multiple files with a comma (,)</span>
+			</span>
+		</td>
+	</tr>
+	<tr class="advancedSetting">
+		<th>
+			<label>Files to exclude:</label>
+		</th>
+		<td>
+			<span>
+				<props:textProperty name="${constants.filesExcludedKey}" className="longField"></props:textProperty>
+				<span class="smallNote">Files relative to the working directory to exclude from the zip uploaded to Code Dx. Separate multiple files with a comma (,)</span>
 			</span>
 		</td>
 	</tr>
 	<tr>
 		<th>
-			<label>Fail Build on Severity:</label>
+			<label>Tool output files:</label>
+		</th>
+		<td>
+			<span>
+				<props:textProperty name="${constants.toolOutputFilesKey}" className="longField"></props:textProperty>
+				<span class="smallNote">Files relative to the working directory (not source or binaries). Separate multiple files with a comma (,)</span>
+			</span>
+		</td>
+	</tr>
+	<tr>
+		<th>
+			<label>Fail build on severity:</label>
 		</th>
 		<td>
 			<span>
@@ -86,7 +108,7 @@
 	</tr>
 	<tr>
 		<th>
-			<label>Analysis Name:</label>
+			<label>Analysis name:</label>
 		</th>
 		<td>
 			<props:textProperty name="${constants.analysisNameKey}" className="longField"></props:textProperty>
