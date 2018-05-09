@@ -1,6 +1,5 @@
 package com.avi.codedx;
 
-import com.avi.codedx.common.security.TeamCityHostnameVerifier;
 import com.avi.codedx.common.security.TeamCityHostnameVerifierFactory;
 import com.avi.codedx.server.CodeDxCredentials;
 import com.avi.codedx.common.security.SSLSocketFactoryFactory;
@@ -19,6 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 
 public class CodeDxServer extends BaseController {
@@ -64,6 +64,9 @@ public class CodeDxServer extends BaseController {
 				case 403:
 						message = "API token does not have permission to access Code Dx projects";
 						break;
+				case 404:
+						message = "URL not found, please enter a different URL";
+						break;
 				default:
 						message = e.getMessage();
 						break;
@@ -71,6 +74,9 @@ public class CodeDxServer extends BaseController {
 			responseCode = responseCode == 0 ? 500 : responseCode;
 			httpServletResponse.setStatus(responseCode);
 			httpServletResponse.getOutputStream().print(message);
+		} catch (MalformedURLException e) {
+			httpServletResponse.setStatus(404);
+			httpServletResponse.getOutputStream().print("Invalid URL");
 		}
 
 		return null;

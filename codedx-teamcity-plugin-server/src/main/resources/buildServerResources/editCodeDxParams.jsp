@@ -30,7 +30,6 @@
 				<span class="error" id="error_${constants.codeDxAPITokenKey}"></span>
 			</span>
 			<span>
-				<button type="button" onclick="getCodeDxProjects()">Verify</button>
 				<span class="error" id="${constants.serverValidationErrorKey}"></span>
 			</span>
 		</td>
@@ -173,6 +172,7 @@
 			}
 
 			if (isErrors) {
+				$project.empty();
 				return;
 			}
 
@@ -203,19 +203,34 @@
 					BS.enableJQueryDropDownFilter('codedx.selectedProject', {});
 				},
 				error: function(jqXHR, textStatus, errorThrown) {
-					if (jqXHR.status === 400) {
-						$urlError.text(jqXHR.responseText);
-					} else if (jqXHR.status === 403) {
-						$apiTokenError.text(jqXHR.responseText);
-					} else {
-						$serverError.text(jqXHR.responseText);
+					switch(jqXHR.status) {
+						case 400:
+							$urlError.text(jqXHR.responseText);
+							break;
+						case 403:
+							$apiTokenError.text(jqXHR.responseText);
+							break;
+						case 404:
+							$urlError.text(jqXHR.responseText);
+							break;
+						default:
+							$serverError.text(jqXHR.responseText);
 					}
+					$project.empty();
 				}
 			});
 		}
 
 		$j(function() {
+			var $url = $j(BS.Util.escapeId('${constants.codeDxUrlKey}'));
+			var $apiToken = $j(BS.Util.escapeId('${constants.codeDxAPITokenKey}'));
+			var $fingerprint = $j(BS.Util.escapeId('${constants.sha1FingerprintKey}'));
+
 			getCodeDxProjects(true);
-		})
+
+			$url.on('input', function() { getCodeDxProjects(false) });
+			$apiToken.on('input', function() { getCodeDxProjects(false) });
+			$fingerprint.on('input', function() { getCodeDxProjects(false) });
+		});
 	</script>
 </l:settingsGroup>
