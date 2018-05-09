@@ -1,6 +1,9 @@
 package com.avi.codedx;
 
+import com.avi.codedx.common.security.TeamCityHostnameVerifier;
+import com.avi.codedx.common.security.TeamCityHostnameVerifierFactory;
 import com.avi.codedx.server.CodeDxCredentials;
+import com.avi.codedx.common.security.SSLSocketFactoryFactory;
 import io.swagger.client.ApiClient;
 import io.swagger.client.ApiException;
 import io.swagger.client.api.ProjectsApi;
@@ -16,6 +19,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.net.URL;
+
 public class CodeDxServer extends BaseController {
 	private PluginDescriptor myDescriptor;
 	protected final ObjectMapper mapper = new ObjectMapper();
@@ -30,14 +35,20 @@ public class CodeDxServer extends BaseController {
 	protected ModelAndView doHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws Exception {
 		CodeDxCredentials credentials = mapper.readValue(httpServletRequest.getInputStream(), CodeDxCredentials.class);
 
-		ApiClient apiClient = new ApiClient();
-		apiClient.setBasePath(credentials.getCodeDxUrl());
-		apiClient.setApiKey(credentials.getCodeDxApiToken());
-
-		ProjectsApi projectsApi = new ProjectsApi();
-		projectsApi.setApiClient(apiClient);
-
 		try {
+			String codedxURL = credentials.getCodeDxUrl();
+			URL url = new URL(codedxURL);
+			String host = url.getHost();
+
+			ApiClient apiClient = new ApiClient();
+			apiClient.setBasePath(credentials.getCodeDxUrl());
+			apiClient.setApiKey(credentials.getCodeDxApiToken());
+			apiClient.getHttpClient().setSslSocketFactory(SSLSocketFactoryFactory.getFactory(credentials.getFingerprint()));
+			apiClient.getHttpClient().setHostnameVerifier(TeamCityHostnameVerifierFactory.getVerifier(host));
+
+			ProjectsApi projectsApi = new ProjectsApi();
+			projectsApi.setApiClient(apiClient);
+
 			Projects projects = projectsApi.getProjects();
 			String projectsJson = mapper.writeValueAsString(projects);
 			httpServletResponse.getOutputStream().print(projectsJson);
@@ -47,8 +58,19 @@ public class CodeDxServer extends BaseController {
 			httpServletResponse.getOutputStream().print("The URL supplied is invalid");
 		} catch (ApiException e) {
 			// Bad API Token?
-			httpServletResponse.setStatus(e.getCode());
-			httpServletResponse.getOutputStream().print(e.getMessage());
+			int responseCode = e.getCode();
+			String message;
+			switch (responseCode) {
+				case 403:
+						message = "API token does not have permission to access Code Dx projects";
+						break;
+				default:
+						message = e.getMessage();
+						break;
+			}
+			responseCode = responseCode == 0 ? 500 : responseCode;
+			httpServletResponse.setStatus(responseCode);
+			httpServletResponse.getOutputStream().print(message);
 		}
 
 		return null;

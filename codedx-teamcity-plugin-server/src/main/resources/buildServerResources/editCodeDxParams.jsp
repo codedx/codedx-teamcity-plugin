@@ -36,6 +36,18 @@
 		</td>
 	</tr>
 	<tr>
+	<tr class="advancedSetting">
+		<th>
+			<label>SHA1 fingerprint:</label>
+		</th>
+		<td>
+			<span>
+				<props:textProperty name="${constants.sha1FingerprintKey}" className="longField"></props:textProperty>
+				<span class="smallNote">Please remove spaces and symbols like (:) from the fingerprint, it should only contain numbers and letters</span>
+			</span>
+		</td>
+	</tr>
+	<tr>
 		<th>
 			<label>Project:</label>
 		</th>
@@ -135,6 +147,7 @@
 			// Controls
 			var $url = $j(BS.Util.escapeId('${constants.codeDxUrlKey}'));
 			var $apiToken = $j(BS.Util.escapeId('${constants.codeDxAPITokenKey}'));
+			var $fingerprint = $j(BS.Util.escapeId('${constants.sha1FingerprintKey}'));
 			var $urlError = $j(BS.Util.escapeId('error_${constants.codeDxUrlKey}'));
 			var $apiTokenError = $j(BS.Util.escapeId('error_${constants.codeDxAPITokenKey}'));
 			var $serverError = $j(BS.Util.escapeId('${constants.serverValidationErrorKey}'));
@@ -147,6 +160,7 @@
 
 			var urlValue = BS.Util.trimSpaces($url.val());
 			var apiTokenValue = BS.Util.trimSpaces($apiToken.val());
+			var fingerprintValue = BS.Util.trimSpaces($fingerprint.val());
 
 			if (!urlValue) {
 				if (!isPageLoading) $urlError.text('Please enter a URL');
@@ -162,7 +176,10 @@
 				return;
 			}
 
-			var credentials = { codeDxUrl: urlValue, codeDxApiToken: apiTokenValue };
+			var credentials = { codeDxUrl: urlValue,
+			                    codeDxApiToken: apiTokenValue,
+			                    fingerprint: fingerprintValue
+			                  };
 
 			$j.ajax({
 				url: '/codedx.html',
@@ -189,7 +206,9 @@
 					if (jqXHR.status === 400) {
 						$urlError.text(jqXHR.responseText);
 					} else if (jqXHR.status === 403) {
-						$apiTokenError.text('API token does not have permission to access Code Dx projects');
+						$apiTokenError.text(jqXHR.responseText);
+					} else {
+						$serverError.text(jqXHR.responseText);
 					}
 				}
 			});

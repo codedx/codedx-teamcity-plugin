@@ -1,5 +1,7 @@
 package com.avi.codedx;
 
+import com.avi.codedx.common.security.SSLSocketFactoryFactory;
+import com.avi.codedx.common.security.TeamCityHostnameVerifierFactory;
 import com.intellij.openapi.diagnostic.Logger;
 import io.swagger.client.ApiClient;
 import io.swagger.client.ApiException;
@@ -16,6 +18,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.security.GeneralSecurityException;
 import java.util.List;
 
 public class CodeDxBuildProcessAdapter extends BuildProcessAdapter {
@@ -31,14 +35,20 @@ public class CodeDxBuildProcessAdapter extends BuildProcessAdapter {
 
 	private final AnalysisApi analysisApi;
 
-	public CodeDxBuildProcessAdapter(CodeDxRunnerSettings settings, BuildRunnerContext context) {
+	public CodeDxBuildProcessAdapter(CodeDxRunnerSettings settings, BuildRunnerContext context) throws GeneralSecurityException, MalformedURLException {
 		this.settings = settings;
 		this.BUILD_PROGRESS_LOGGER = context.getBuild().getBuildLogger();
 		this.context = context;
+		String fingerprint = this.settings.getFingerprint();
 
 		ApiClient apiClient = new ApiClient();
 		apiClient.setBasePath(this.settings.getUrl());
 		apiClient.setApiKey(this.settings.getApiToken());
+
+		if (fingerprint != null && !fingerprint.isEmpty()) {
+			apiClient.getHttpClient().setSslSocketFactory(SSLSocketFactoryFactory.getFactory(this.settings.getFingerprint()));
+			apiClient.getHttpClient().setHostnameVerifier(TeamCityHostnameVerifierFactory.getVerifier(this.settings.getHostname()));
+		}
 
 		this.analysisApi = new AnalysisApi();
 		this.analysisApi.setApiClient(apiClient);

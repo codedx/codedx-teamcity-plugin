@@ -14,6 +14,7 @@ public interface CodeDxConstants {
 	String SETTINGS_ONLY_NEW_FINDINGS_KEY = "codedx.onlyNewFindings";
 	String SETTINGS_ANALYSIS_NAME_KEY = "codedx.analysisName";
 	String SETTINGS_TOOL_OUTPUT_FILES_KEY = "codedx.toolOutputFiles";
+	String SETTINGS_SHA1_FINGERPRINT_KEY = "codedx.sha1Fingerprint";
 
 	String RUNNER_DISPLAY_NAME = "Code Dx";
 	String RUNNER_DESCRIPTION = "Code Dx analysis runner";

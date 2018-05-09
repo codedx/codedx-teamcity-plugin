@@ -58,4 +58,9 @@ public class CodeDxConstantsBean {
 	public String getFilesExcludedKey() {
 		return CodeDxConstants.SETTINGS_FILES_EXCLUDED_KEY;
 	}
+
+	@NotNull
+	public String getSha1FingerprintKey() {
+		return CodeDxConstants.SETTINGS_SHA1_FINGERPRINT_KEY;
+	}
 }

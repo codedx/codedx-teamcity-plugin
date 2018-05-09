@@ -1,11 +1,16 @@
 package com.avi.codedx;
 
+import com.avi.codedx.common.CodeDxConstants;
 import io.swagger.client.model.ProjectId;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 class CodeDxRunnerSettings {
 	private final String url;
@@ -17,25 +22,19 @@ class CodeDxRunnerSettings {
 	private final String onlyFailOnNewFindings;
 	private final String analysisName;
 	private final String toolOutputFiles;
+	private final String fingerprint;
 
-	public CodeDxRunnerSettings(String url,
-	                            String apiToken,
-	                            String projectId,
-	                            String filesToUpload,
-	                            String filesToExclude,
-	                            String severityToBreakBuild,
-	                            String onlyFailOnNewFindings,
-	                            String analysisName,
-	                            String toolOutputFiles) {
-		this.url = url;
-		this.apiToken = apiToken;
-		this.projectId = projectId;
-		this.filesToUpload = filesToUpload;
-		this.filesToExclude = filesToExclude;
-		this.severityToBreakBuild = severityToBreakBuild;
-		this.onlyFailOnNewFindings = onlyFailOnNewFindings;
-		this.analysisName = analysisName;
-		this.toolOutputFiles = toolOutputFiles;
+	public CodeDxRunnerSettings(Map<String, String> parameters) {
+		this.url = parameters.get(CodeDxConstants.SETTINGS_CODEDX_URL_KEY);
+		this.apiToken = parameters.get(CodeDxConstants.SETTINGS_API_TOKEN_KEY);
+		this.projectId = parameters.get(CodeDxConstants.SETTINGS_CODEDX_PROJECT_KEY);
+		this.filesToUpload = parameters.get(CodeDxConstants.SETTINGS_FILES);
+		this.severityToBreakBuild = parameters.get(CodeDxConstants.SETTINGS_CODEDX_SEVERITY_KEY);
+		this.onlyFailOnNewFindings = parameters.get(CodeDxConstants.SETTINGS_ONLY_NEW_FINDINGS_KEY);
+		this.analysisName = parameters.get(CodeDxConstants.SETTINGS_ANALYSIS_NAME_KEY);
+		this.toolOutputFiles = parameters.get(CodeDxConstants.SETTINGS_TOOL_OUTPUT_FILES_KEY);
+		this.filesToExclude = parameters.get(CodeDxConstants.SETTINGS_FILES_EXCLUDED_KEY);
+		this.fingerprint = parameters.get(CodeDxConstants.SETTINGS_SHA1_FINGERPRINT_KEY);
 	}
 
 	public String getUrl() {
@@ -78,5 +77,14 @@ class CodeDxRunnerSettings {
 
 	public String getAnalysisName() {
 		return this.analysisName;
+	}
+
+	public String getFingerprint() {
+		return this.fingerprint;
+	}
+
+	public String getHostname() throws MalformedURLException{
+		URL fullUrl = new URL(this.url);
+		return fullUrl.getHost();
 	}
 }

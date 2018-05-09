@@ -4,6 +4,7 @@ public class CodeDxCredentials {
 
 	private String codeDxUrl;
 	private String codeDxApiToken;
+	private String fingerprint;
 
 	public void setCodeDxUrl(String codeDxUrl) {
 		this.codeDxUrl = codeDxUrl;
@@ -19,5 +20,13 @@ public class CodeDxCredentials {
 
 	public String getCodeDxApiToken() {
 		return this.codeDxApiToken;
+	}
+
+	public void setFingerprint(String fingerprint) {
+		this.fingerprint = fingerprint;
+	}
+
+	public String getFingerprint() {
+		return this.fingerprint;
 	}
 }
