@@ -22,7 +22,7 @@
 	</tr>
 	<tr>
 		<th>
-			<label>API token:</label>
+			<label>API key:</label>
 		</th>
 		<td>
 			<span>
