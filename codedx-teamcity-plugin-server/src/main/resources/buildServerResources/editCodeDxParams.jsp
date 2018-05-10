@@ -147,6 +147,7 @@
 			var $url = $j(BS.Util.escapeId('${constants.codeDxUrlKey}'));
 			var $apiToken = $j(BS.Util.escapeId('${constants.codeDxAPITokenKey}'));
 			var $fingerprint = $j(BS.Util.escapeId('${constants.sha1FingerprintKey}'));
+			var $projects = $j(BS.Util.escapeId('${constants.codeDxProjectKey}'));
 			var $urlError = $j(BS.Util.escapeId('error_${constants.codeDxUrlKey}'));
 			var $apiTokenError = $j(BS.Util.escapeId('error_${constants.codeDxAPITokenKey}'));
 			var $serverError = $j(BS.Util.escapeId('${constants.serverValidationErrorKey}'));
@@ -172,7 +173,7 @@
 			}
 
 			if (isErrors) {
-				$project.empty();
+				$projects.empty();
 				return;
 			}
 
@@ -216,7 +217,7 @@
 						default:
 							$serverError.text(jqXHR.responseText);
 					}
-					$project.empty();
+					$projects.empty();
 				}
 			});
 		}
