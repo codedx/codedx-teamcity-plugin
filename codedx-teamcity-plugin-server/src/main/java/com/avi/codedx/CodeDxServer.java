@@ -37,14 +37,18 @@ public class CodeDxServer extends BaseController {
 
 		try {
 			String codedxURL = credentials.getCodeDxUrl();
+			String fingerprint = credentials.getFingerprint();
 			URL url = new URL(codedxURL);
 			String host = url.getHost();
 
 			ApiClient apiClient = new ApiClient();
-			apiClient.setBasePath(credentials.getCodeDxUrl());
+			apiClient.setBasePath(codedxURL);
 			apiClient.setApiKey(credentials.getCodeDxApiToken());
-			apiClient.getHttpClient().setSslSocketFactory(SSLSocketFactoryFactory.getFactory(credentials.getFingerprint()));
-			apiClient.getHttpClient().setHostnameVerifier(TeamCityHostnameVerifierFactory.getVerifier(host));
+
+			if (fingerprint != null && !fingerprint.isEmpty()) {
+				apiClient.getHttpClient().setSslSocketFactory(SSLSocketFactoryFactory.getFactory(fingerprint));
+				apiClient.getHttpClient().setHostnameVerifier(TeamCityHostnameVerifierFactory.getVerifier(host));
+			}
 
 			ProjectsApi projectsApi = new ProjectsApi();
 			projectsApi.setApiClient(apiClient);
