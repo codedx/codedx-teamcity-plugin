@@ -72,7 +72,7 @@ public class CodeDxServer extends BaseController {
 						message = "URL not found, please enter a different URL";
 						break;
 				default:
-						message = e.getMessage();
+						message = getBetterErrorMessage(e);
 						break;
 			}
 			responseCode = responseCode == 0 ? 500 : responseCode;
@@ -84,5 +84,16 @@ public class CodeDxServer extends BaseController {
 		}
 
 		return null;
+	}
+
+	private static String getBetterErrorMessage(Throwable e) {
+		String originalMessage = e.getMessage();
+		String betterMessage = originalMessage;
+
+		if (originalMessage.contains("SSLHandshakeException")) {
+			betterMessage = "The SSL Certificate presented by the server is invalid. If this is expected, please input the SHA1 fingerprint in the advanced options";
+		}
+
+		return betterMessage;
 	}
 }
