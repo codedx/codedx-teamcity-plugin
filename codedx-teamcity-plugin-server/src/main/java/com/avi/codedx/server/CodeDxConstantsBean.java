@@ -63,4 +63,14 @@ public class CodeDxConstantsBean {
 	public String getSha1FingerprintKey() {
 		return CodeDxConstants.SETTINGS_SHA1_FINGERPRINT_KEY;
 	}
+
+	@NotNull
+	public String getWaitForResultsKey() {
+		return CodeDxConstants.SETTINGS_WAIT_FOR_RESULTS_KEY;
+	}
+
+	@NotNull
+	public String getReportArchiveNameKey() {
+		return CodeDxConstants.SETTINGS_REPORT_ARCHIVE_NAME_KEY;
+	}
 }

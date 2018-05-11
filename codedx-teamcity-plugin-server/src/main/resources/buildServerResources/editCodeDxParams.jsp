@@ -94,6 +94,25 @@
 	</tr>
 	<tr>
 		<th>
+			<label for="${constants.waitForResultsKey}">Wait for results:</label>
+		</th>
+		<td>
+			<props:checkboxProperty name="${constants.waitForResultsKey}"/>
+		</td>
+	</tr>
+	<tr>
+		<th>
+			<label>Report archive name:</label>
+		</th>
+		<td>
+			<span>
+				<props:textProperty name="${constants.reportArchiveNameKey}" className="longField"></props:textProperty>
+				<span class="smallNote">Please provide a unique and static name for the report archive file. If the name is not unique, the report may be overwritten by other Code Dx build steps. If the name is not static, the report tab will not display.</span>
+			</span>
+		</td>
+	</tr>
+	<tr>
+		<th>
 			<label>Fail build on severity:</label>
 		</th>
 		<td>

@@ -34,6 +34,14 @@ public class CodeDxBuildProcessAdapter extends BuildProcessAdapter {
 	private final BuildRunnerContext context;
 
 	private final AnalysisApi analysisApi;
+	private final FindingDataApi findingDataApi;
+
+	private CodeDxBuildStatistics severityStatsBeforeAnalysis;
+	private CodeDxBuildStatistics severityStatsAfterAnalysis;
+
+	private final GroupedCountsRequest requestForSeverityGroupCount;
+	private final GroupedCountsRequest requestForStatusGroupCount;
+
 
 	public CodeDxBuildProcessAdapter(CodeDxRunnerSettings settings, BuildRunnerContext context) throws GeneralSecurityException, MalformedURLException {
 		this.settings = settings;
@@ -52,6 +60,20 @@ public class CodeDxBuildProcessAdapter extends BuildProcessAdapter {
 
 		this.analysisApi = new AnalysisApi();
 		this.analysisApi.setApiClient(apiClient);
+
+		this.findingDataApi = new FindingDataApi();
+		this.findingDataApi.setApiClient(apiClient);
+
+		Filter filter = new Filter();
+		filter.put("~status", "gone");
+
+		this.requestForSeverityGroupCount = new GroupedCountsRequest();
+		this.requestForSeverityGroupCount.setFilter(filter);
+		this.requestForSeverityGroupCount.setCountBy("severity");
+
+		this.requestForStatusGroupCount = new GroupedCountsRequest();
+		this.requestForStatusGroupCount.setFilter(filter);
+		this.requestForStatusGroupCount.setCountBy("status");
 	}
 
 	@Override
@@ -68,6 +90,8 @@ public class CodeDxBuildProcessAdapter extends BuildProcessAdapter {
 		try{
 			boolean readyToRunAnalysis = false;
 			List<File> filesToUpload = this.settings.getFilesToUpload(context.getWorkingDirectory());
+
+			this.severityStatsBeforeAnalysis = getBuildStats();
 
 			String analysisPrepId = this.uploadFiles(filesToUpload);
 
@@ -160,10 +184,10 @@ public class CodeDxBuildProcessAdapter extends BuildProcessAdapter {
 		return analysis.getJobId();
 	}
 
-	private BuildFinishedStatus getAnalysisResults(String jobId) throws ApiException, InterruptedException {
-		String severityToBreakBuild = this.settings.getSeverityToBreakBuild();
+	private BuildFinishedStatus getAnalysisResults(String jobId) throws ApiException, InterruptedException, IOException {
+		boolean waitForAnalysisResults = this.settings.waitForResults();
 
-		if (severityToBreakBuild.equals("None")) {
+		if (!waitForAnalysisResults) {
 			return BuildFinishedStatus.FINISHED_SUCCESS;
 		}
 
@@ -187,8 +211,30 @@ public class CodeDxBuildProcessAdapter extends BuildProcessAdapter {
 			}
 		}
 
-		FindingDataApi findingDataApi = new FindingDataApi();
-		findingDataApi.setApiClient(this.analysisApi.getApiClient());
+		this.severityStatsAfterAnalysis = getBuildStats();
+
+		CodeDxReportWriter reportWriter = new CodeDxReportWriter(this.settings.getReportArchiveName() ,this.severityStatsBeforeAnalysis, this.severityStatsAfterAnalysis);
+		reportWriter.writeReport(context.getWorkingDirectory());
+
+		if (failThisBuild()){
+			BUILD_PROGRESS_LOGGER.warning("Code Dx has reported findings with a severity level of " + this.settings.getSeverityToBreakBuild());
+			return BuildFinishedStatus.FINISHED_FAILED;
+		} else {
+			return BuildFinishedStatus.FINISHED_SUCCESS;
+		}
+	}
+
+	/**
+	 * Fail the build if a severity that matches user supplied criteria is reported.
+	 * @return
+	 * @throws ApiException
+	 */
+	private boolean failThisBuild() throws ApiException {
+		String severityToBreakBuild = this.settings.getSeverityToBreakBuild();
+
+		if(severityToBreakBuild.equals("None")){
+			return false;
+		}
 
 		int projectId = this.settings.getProjectId().getProjectId();
 		Query query = new Query();
@@ -205,13 +251,21 @@ public class CodeDxBuildProcessAdapter extends BuildProcessAdapter {
 		query.setPagination(pagination);
 		query.setSort(sort);
 
-		Count count = findingDataApi.getFindingsCount(projectId, query);
+		Count count = this.findingDataApi.getFindingsCount(projectId, query);
 
 		if (count.getCount() > 0){
-			BUILD_PROGRESS_LOGGER.warning("Code Dx has reported " + count.getCount() + " findings with a severity level of " + severityToBreakBuild);
-			return BuildFinishedStatus.FINISHED_FAILED;
+			return true;
 		} else {
-			return BuildFinishedStatus.FINISHED_SUCCESS;
+			return false;
 		}
+	}
+
+	private CodeDxBuildStatistics getBuildStats() throws ApiException {
+		int projectId = this.settings.getProjectId().getProjectId();
+
+		List<GroupedCount> groupedSeverityCounts = this.findingDataApi.getFindingsGroupCount(projectId, this.requestForSeverityGroupCount);
+		List<GroupedCount> groupedStatusCounts = this.findingDataApi.getFindingsGroupCount(projectId, this.requestForStatusGroupCount);
+
+		return new CodeDxBuildStatistics(groupedSeverityCounts, groupedStatusCounts);
 	}
 }

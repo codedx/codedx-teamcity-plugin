@@ -6,7 +6,6 @@ import io.swagger.client.model.ProjectId;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +22,8 @@ class CodeDxRunnerSettings {
 	private final String analysisName;
 	private final String toolOutputFiles;
 	private final String fingerprint;
+	private final String waitForResults;
+	private final String reportArchiveName;
 
 	public CodeDxRunnerSettings(Map<String, String> parameters) {
 		this.url = parameters.get(CodeDxConstants.SETTINGS_CODEDX_URL_KEY);
@@ -35,6 +36,8 @@ class CodeDxRunnerSettings {
 		this.toolOutputFiles = parameters.get(CodeDxConstants.SETTINGS_TOOL_OUTPUT_FILES_KEY);
 		this.filesToExclude = parameters.get(CodeDxConstants.SETTINGS_FILES_EXCLUDED_KEY);
 		this.fingerprint = parameters.get(CodeDxConstants.SETTINGS_SHA1_FINGERPRINT_KEY);
+		this.waitForResults = parameters.get(CodeDxConstants.SETTINGS_WAIT_FOR_RESULTS_KEY);
+		this.reportArchiveName = parameters.get(CodeDxConstants.SETTINGS_REPORT_ARCHIVE_NAME_KEY);
 	}
 
 	public String getUrl() {
@@ -75,6 +78,10 @@ class CodeDxRunnerSettings {
 		return this.onlyFailOnNewFindings != null && this.onlyFailOnNewFindings.equals("true");
 	}
 
+	public boolean waitForResults() {
+		return this.waitForResults != null && this.waitForResults.equals("true");
+	}
+
 	public String getAnalysisName() {
 		return this.analysisName;
 	}
@@ -86,5 +93,9 @@ class CodeDxRunnerSettings {
 	public String getHostname() throws MalformedURLException{
 		URL fullUrl = new URL(this.url);
 		return fullUrl.getHost();
+	}
+
+	public String getReportArchiveName() {
+		return this.reportArchiveName;
 	}
 }

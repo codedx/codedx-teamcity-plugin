@@ -15,6 +15,22 @@ public interface CodeDxConstants {
 	String SETTINGS_ANALYSIS_NAME_KEY = "codedx.analysisName";
 	String SETTINGS_TOOL_OUTPUT_FILES_KEY = "codedx.toolOutputFiles";
 	String SETTINGS_SHA1_FINGERPRINT_KEY = "codedx.sha1Fingerprint";
+	String SETTINGS_WAIT_FOR_RESULTS_KEY = "codedx.waitForResults";
+	String SETTINGS_REPORT_ARCHIVE_NAME_KEY = "codedx.reportArchiveName";
+
+	String CRITICAL = "Critical";
+	String HIGH = "High";
+	String MEDIUM = "Medium";
+	String LOW = "Low";
+	String INFO = "Info";
+
+	String FIXED = "Fixed";
+	String MITIGATED = "Mitigated";
+	String IGNORED = "Ignored";
+	String FALSE_POSITIVE = "False Positive";
+	String UNRESOLVED = "Unresolved";
+	String ESCALATED = "Escalated";
+	String ASSIGNED = "Assigned";
 
 	String RUNNER_DISPLAY_NAME = "Code Dx";
 	String RUNNER_DESCRIPTION = "Code Dx analysis runner";

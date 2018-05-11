@@ -28,17 +28,22 @@ public class Archiver {
 				zout.putNextEntry(e);
 
 				try (FileInputStream fis = new FileInputStream(file)) {
-					byte[] bytes = new byte[1024];
-					int length;
-					while ((length = fis.read(bytes)) >= 0) {
-						zout.write(bytes, 0, length);
-					}
-					zout.closeEntry();
-					fis.close();
+					addFileToZip(zout, fis);
 				}
 			}
+			zout.close();
 		}
 		return zip;
+	}
+
+	public static void addFileToZip(ZipOutputStream zout, FileInputStream fis) throws IOException {
+		byte[] bytes = new byte[1024];
+		int length;
+		while ((length = fis.read(bytes)) >= 0) {
+			zout.write(bytes, 0, length);
+		}
+		zout.closeEntry();
+		fis.close();
 	}
 
 	private static String[] splitFileWildcards(final String string) {
