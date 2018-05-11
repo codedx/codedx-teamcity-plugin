@@ -5,5 +5,4 @@
        default-autowire="constructor">
     <bean id="codeDxRunType" class="com.avi.codedx.server.CodeDxRunType"/>
     <bean class="com.avi.codedx.CodeDxServer"/>
-    <bean class="com.avi.codedx.server.CodeDxTab"/>
 </beans>
