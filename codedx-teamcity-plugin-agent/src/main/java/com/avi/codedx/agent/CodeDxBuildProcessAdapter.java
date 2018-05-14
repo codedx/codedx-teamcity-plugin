@@ -213,12 +213,16 @@ public class CodeDxBuildProcessAdapter extends BuildProcessAdapter {
 
 		this.severityStatsAfterAnalysis = getBuildStats();
 
-		CodeDxReportWriter reportWriter = new CodeDxReportWriter(this.settings.getReportArchiveName(),
-			this.severityStatsBeforeAnalysis,
-			this.severityStatsAfterAnalysis,
-			this.settings.getUrl(),
-			this.settings.getProjectId().getProjectId());
-		reportWriter.writeReport(context.getWorkingDirectory());
+		String archiveName = this.settings.getReportArchiveName();
+
+		if(archiveName != null && !archiveName.isEmpty()) {
+			CodeDxReportWriter reportWriter = new CodeDxReportWriter(archiveName,
+				this.severityStatsBeforeAnalysis,
+				this.severityStatsAfterAnalysis,
+				this.settings.getUrl(),
+				this.settings.getProjectId().getProjectId());
+			reportWriter.writeReport(context.getWorkingDirectory());
+		}
 
 		if (failThisBuild()){
 			BUILD_PROGRESS_LOGGER.warning("Code Dx has reported findings with a severity level of " + this.settings.getSeverityToBreakBuild());
