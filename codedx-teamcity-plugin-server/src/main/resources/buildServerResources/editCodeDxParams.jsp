@@ -93,15 +93,21 @@
 		</td>
 	</tr>
 	<tr>
+		<th>
+			<label>Analysis name:</label>
+		</th>
+		<td>
+			<props:textProperty name="${constants.analysisNameKey}" className="longField"></props:textProperty>
+		</td>
+	</tr>
+	<tr>
 		<c:set var="onclick">
 			$('${constants.reportArchiveNameKey}').disabled = !this.checked;
 			$('${constants.codeDxSeverityKey}').disabled = !this.checked;
 			$('${constants.onlyNewFindingsKey}').disabled = !this.checked;
-			$('${constants.analysisNameKey}').disabled = !this.checked;
 			BS.VisibilityHandlers.updateVisibility('${constants.reportArchiveNameKey}');
 			BS.VisibilityHandlers.updateVisibility('${constants.codeDxSeverityKey}');
 			BS.VisibilityHandlers.updateVisibility('${constants.onlyNewFindingsKey}');
-			BS.VisibilityHandlers.updateVisibility('${constants.analysisNameKey}');
 		</c:set>
 		<th>
 			<label for="${constants.waitForResultsKey}">Wait for results:</label>
@@ -145,14 +151,6 @@
 		</th>
 		<td>
 			<props:checkboxProperty name="${constants.onlyNewFindingsKey}"/>
-		</td>
-	</tr>
-	<tr>
-		<th>
-			<label>Analysis name:</label>
-		</th>
-		<td>
-			<props:textProperty name="${constants.analysisNameKey}" className="longField"></props:textProperty>
 		</td>
 	</tr>
 	<script type="text/javascript">
@@ -261,11 +259,9 @@
 			$('${constants.reportArchiveNameKey}').disabled = !isWaitForResults;
 			$('${constants.codeDxSeverityKey}').disabled = !isWaitForResults;
 			$('${constants.onlyNewFindingsKey}').disabled = !isWaitForResults;
-			$('${constants.analysisNameKey}').disabled = !isWaitForResults;
 			BS.VisibilityHandlers.updateVisibility('${constants.reportArchiveNameKey}');
 			BS.VisibilityHandlers.updateVisibility('${constants.codeDxSeverityKey}');
 			BS.VisibilityHandlers.updateVisibility('${constants.onlyNewFindingsKey}');
-			BS.VisibilityHandlers.updateVisibility('${constants.analysisNameKey}');
 
 			getCodeDxProjects(true);
 
