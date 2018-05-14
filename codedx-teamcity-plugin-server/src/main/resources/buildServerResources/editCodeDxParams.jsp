@@ -93,11 +93,22 @@
 		</td>
 	</tr>
 	<tr>
+		<c:set var="onclick">
+			$('${constants.reportArchiveNameKey}').disabled = !this.checked;
+			$('${constants.codeDxSeverityKey}').disabled = !this.checked;
+			$('${constants.onlyNewFindingsKey}').disabled = !this.checked;
+			$('${constants.analysisNameKey}').disabled = !this.checked;
+			BS.VisibilityHandlers.updateVisibility('${constants.reportArchiveNameKey}');
+			BS.VisibilityHandlers.updateVisibility('${constants.codeDxSeverityKey}');
+			BS.VisibilityHandlers.updateVisibility('${constants.onlyNewFindingsKey}');
+			BS.VisibilityHandlers.updateVisibility('${constants.analysisNameKey}');
+		</c:set>
 		<th>
 			<label for="${constants.waitForResultsKey}">Wait for results:</label>
+			<span class="smallNote"></span>
 		</th>
 		<td>
-			<props:checkboxProperty name="${constants.waitForResultsKey}"/>
+			<props:checkboxProperty name="${constants.waitForResultsKey}" onclick="${onclick}"/>
 		</td>
 	</tr>
 	<tr>
@@ -242,9 +253,19 @@
 		}
 
 		$j(function() {
+			var isWaitForResults = $('codedx.waitForResults').checked;
 			var $url = $j(BS.Util.escapeId('${constants.codeDxUrlKey}'));
 			var $apiToken = $j(BS.Util.escapeId('${constants.codeDxAPITokenKey}'));
 			var $fingerprint = $j(BS.Util.escapeId('${constants.sha1FingerprintKey}'));
+
+			$('${constants.reportArchiveNameKey}').disabled = !isWaitForResults;
+			$('${constants.codeDxSeverityKey}').disabled = !isWaitForResults;
+			$('${constants.onlyNewFindingsKey}').disabled = !isWaitForResults;
+			$('${constants.analysisNameKey}').disabled = !isWaitForResults;
+			BS.VisibilityHandlers.updateVisibility('${constants.reportArchiveNameKey}');
+			BS.VisibilityHandlers.updateVisibility('${constants.codeDxSeverityKey}');
+			BS.VisibilityHandlers.updateVisibility('${constants.onlyNewFindingsKey}');
+			BS.VisibilityHandlers.updateVisibility('${constants.analysisNameKey}');
 
 			getCodeDxProjects(true);
 
