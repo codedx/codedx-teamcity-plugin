@@ -15,20 +15,24 @@ public class CodeDxReportWriter {
 	private final static String REPORT_FILE_NAME = "codedx-teamcity-report.html";
 
 	private final static String CSS = "table{ border-collapse:collapse; width: 50%; margin:25px 25% 25px 25%; table-layout:fixed; }"
-	                                + "td, th { border: 1px solid #dddddd; text-align:left; padding: 8px; }";
+	                                + "td, th { border: 1px solid #dddddd; text-align:left; padding: 5px; }"
+	                                + "a { display: block; text-align: center; }";
 
 	private final static String HTML_BASE = "<html><head><style>%s</style><title>Code Dx Report</title></head><body>%s</body></html>";
 	private final static String STATS_TABLE_BASE = "<table><tr><th>%s</th><th>Findings</th><th>Delta</th></tr>%s</table>";
 	private final static String STATS_TABLE_ROWS_BASE = "<tr><td>%s</td><td>%s</td><td>%s</td></tr>";
+	private final static String LINK_TO_CODEDX = "<a target=\"_blank\" href=\"%s\">%s</a>";
 
 	private final String reportArchiveName;
 	private final CodeDxBuildStatistics statsBeforeAnalysis;
 	private final CodeDxBuildStatistics statsAfterAnalysis;
+	private final String url;
 
-	public CodeDxReportWriter(String reportArchiveName, CodeDxBuildStatistics statsBeforeAnalysis, CodeDxBuildStatistics statsAfterAnalysis) {
+	public CodeDxReportWriter(String reportArchiveName, CodeDxBuildStatistics statsBeforeAnalysis, CodeDxBuildStatistics statsAfterAnalysis, String url, int projectId) {
 		this.reportArchiveName = reportArchiveName;
 		this.statsBeforeAnalysis = statsBeforeAnalysis;
 		this.statsAfterAnalysis = statsAfterAnalysis;
+		this.url = url + "/projects/" + projectId;
 	}
 
 	public void writeReport(File workspace) throws IOException {
@@ -67,13 +71,15 @@ public class CodeDxReportWriter {
 
 		tempHtmlFile.deleteOnExit();
 
+		String linkBack = String.format(LINK_TO_CODEDX, this.url, this.url);
+
 		String severityTableRows = makeSeverityTableRows();
 		String severityTable = String.format(STATS_TABLE_BASE, "Severity", severityTableRows);
 
 		String statusTableRows = makeStatusTableRows();
 		String statusTable = String.format(STATS_TABLE_BASE, "Status", statusTableRows);
 
-		String html = String.format(HTML_BASE, CSS, severityTable + statusTable);
+		String html = String.format(HTML_BASE, CSS, linkBack + severityTable + statusTable);
 
 		bw.write(html);
 		bw.close();

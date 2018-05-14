@@ -213,7 +213,11 @@ public class CodeDxBuildProcessAdapter extends BuildProcessAdapter {
 
 		this.severityStatsAfterAnalysis = getBuildStats();
 
-		CodeDxReportWriter reportWriter = new CodeDxReportWriter(this.settings.getReportArchiveName() ,this.severityStatsBeforeAnalysis, this.severityStatsAfterAnalysis);
+		CodeDxReportWriter reportWriter = new CodeDxReportWriter(this.settings.getReportArchiveName(),
+			this.severityStatsBeforeAnalysis,
+			this.severityStatsAfterAnalysis,
+			this.settings.getUrl(),
+			this.settings.getProjectId().getProjectId());
 		reportWriter.writeReport(context.getWorkingDirectory());
 
 		if (failThisBuild()){
