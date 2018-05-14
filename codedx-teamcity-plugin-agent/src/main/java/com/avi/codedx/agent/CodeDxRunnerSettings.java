@@ -1,4 +1,4 @@
-package com.avi.codedx;
+package com.avi.codedx.agent;
 
 import com.avi.codedx.common.CodeDxConstants;
 import io.swagger.client.model.ProjectId;

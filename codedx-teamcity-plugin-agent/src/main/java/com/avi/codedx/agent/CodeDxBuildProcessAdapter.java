@@ -1,4 +1,4 @@
-package com.avi.codedx;
+package com.avi.codedx.agent;
 
 import com.avi.codedx.common.security.SSLSocketFactoryFactory;
 import com.avi.codedx.common.security.TeamCityHostnameVerifierFactory;

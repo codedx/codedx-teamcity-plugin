@@ -31,6 +31,7 @@ public interface CodeDxConstants {
 	String UNRESOLVED = "Unresolved";
 	String ESCALATED = "Escalated";
 	String ASSIGNED = "Assigned";
+	String TOTAL = "Total";
 
 	String RUNNER_DISPLAY_NAME = "Code Dx";
 	String RUNNER_DESCRIPTION = "Code Dx analysis runner";

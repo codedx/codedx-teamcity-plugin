@@ -1,4 +1,4 @@
-package com.avi.codedx;
+package com.avi.codedx.agent;
 
 import jetbrains.buildServer.util.pathMatcher.AntPatternFileCollector;
 

@@ -1,4 +1,4 @@
-package com.avi.codedx;
+package com.avi.codedx.agent;
 
 import com.avi.codedx.common.CodeDxConstants;
 import jetbrains.buildServer.agent.AgentBuildRunnerInfo;
