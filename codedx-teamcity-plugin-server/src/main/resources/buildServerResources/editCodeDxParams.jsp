@@ -135,11 +135,12 @@
 		<td>
 			<span>
 				<props:selectProperty name="${constants.codeDxSeverityKey}" className="mediumField">
-					<props:option value="None"><c:out value="None"/></props:option>
-					<props:option value="Critical"><c:out value="Critical"/></props:option>
-					<props:option value="High"><c:out value="High"/></props:option>
-					<props:option value="Medium"><c:out value="Medium"/></props:option>
-					<props:option value="Low"><c:out value="Low"/></props:option>
+					<props:option value="0"><c:out value="None"/></props:option>
+					<props:option value="1"><c:out value="Info or higher"/></props:option>
+					<props:option value="2"><c:out value="Low or higher"/></props:option>
+					<props:option value="3"><c:out value="Medium or higher"/></props:option>
+					<props:option value="4"><c:out value="High or higher"/></props:option>
+					<props:option value="5"><c:out value="Critical"/></props:option>
 				</props:selectProperty>
 			</span>
 			<span>

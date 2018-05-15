@@ -1,5 +1,6 @@
 package com.avi.codedx.agent;
 
+import com.avi.codedx.common.CodeDxConstants;
 import com.avi.codedx.common.security.SSLSocketFactoryFactory;
 import com.avi.codedx.common.security.TeamCityHostnameVerifierFactory;
 import com.intellij.openapi.diagnostic.Logger;
@@ -20,7 +21,9 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.security.GeneralSecurityException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class CodeDxBuildProcessAdapter extends BuildProcessAdapter {
 	private static final Logger LOG = Logger.getInstance(CodeDxBuildProcessAdapter.class.getName());
@@ -36,11 +39,21 @@ public class CodeDxBuildProcessAdapter extends BuildProcessAdapter {
 	private final AnalysisApi analysisApi;
 	private final FindingDataApi findingDataApi;
 
-	private CodeDxBuildStatistics severityStatsBeforeAnalysis;
-	private CodeDxBuildStatistics severityStatsAfterAnalysis;
+	private CodeDxBuildStatistics statsBeforeAnalysis;
+	private CodeDxBuildStatistics statsAfterAnalysis;
 
 	private final GroupedCountsRequest requestForSeverityGroupCount;
 	private final GroupedCountsRequest requestForStatusGroupCount;
+
+	private static final Map<Integer, String> severities;
+	static {
+		severities = new HashMap<>();
+		severities.put(1, CodeDxConstants.INFO);
+		severities.put(2, CodeDxConstants.LOW);
+		severities.put(3, CodeDxConstants.MEDIUM);
+		severities.put(4, CodeDxConstants.HIGH);
+		severities.put(5, CodeDxConstants.CRITICAL);
+	}
 
 
 	public CodeDxBuildProcessAdapter(CodeDxRunnerSettings settings, BuildRunnerContext context) throws GeneralSecurityException, MalformedURLException {
@@ -91,7 +104,7 @@ public class CodeDxBuildProcessAdapter extends BuildProcessAdapter {
 			boolean readyToRunAnalysis = false;
 			List<File> filesToUpload = this.settings.getFilesToUpload(context.getWorkingDirectory());
 
-			this.severityStatsBeforeAnalysis = getBuildStats();
+			this.statsBeforeAnalysis = getBuildStats();
 
 			String analysisPrepId = this.uploadFiles(filesToUpload);
 
@@ -211,21 +224,21 @@ public class CodeDxBuildProcessAdapter extends BuildProcessAdapter {
 			}
 		}
 
-		this.severityStatsAfterAnalysis = getBuildStats();
+		this.statsAfterAnalysis = getBuildStats();
 
 		String archiveName = this.settings.getReportArchiveName();
 
 		if(archiveName != null && !archiveName.isEmpty()) {
 			CodeDxReportWriter reportWriter = new CodeDxReportWriter(archiveName,
-				this.severityStatsBeforeAnalysis,
-				this.severityStatsAfterAnalysis,
+				this.statsBeforeAnalysis,
+				this.statsAfterAnalysis,
 				this.settings.getUrl(),
 				this.settings.getProjectId().getProjectId());
 			reportWriter.writeReport(context.getWorkingDirectory());
 		}
 
 		if (failThisBuild()){
-			BUILD_PROGRESS_LOGGER.warning("Code Dx has reported findings with a severity level of " + this.settings.getSeverityToBreakBuild());
+			BUILD_PROGRESS_LOGGER.warning("Code Dx has reported findings that match the configured build-failure value.");
 			return BuildFinishedStatus.FINISHED_FAILED;
 		} else {
 			return BuildFinishedStatus.FINISHED_SUCCESS;
@@ -238,34 +251,21 @@ public class CodeDxBuildProcessAdapter extends BuildProcessAdapter {
 	 * @throws ApiException
 	 */
 	private boolean failThisBuild() throws ApiException {
-		String severityToBreakBuild = this.settings.getSeverityToBreakBuild();
+		Integer severityValueToBreakBuild = Integer.parseInt(this.settings.getSeverityToBreakBuild());
 
-		if(severityToBreakBuild.equals("None")){
+		if (severityValueToBreakBuild == 0) {
 			return false;
 		}
 
-		int projectId = this.settings.getProjectId().getProjectId();
-		Query query = new Query();
-		Sort sort = new Sort();
-		Pagination pagination = new Pagination();
-
-		Filter filter = new Filter();
-		if (settings.onlyFailOnNewFindings()) {
-			filter.put("status", "new");
+		for(int i = severityValueToBreakBuild; i < 6; i++) {
+			String severity = severities.get(i);
+			int numberOfFindingsForSeverity = this.statsAfterAnalysis.getNumberOfFindingsForGroupAndName(CodeDxBuildStatistics.Group.SEVERITY, severity);
+			if (numberOfFindingsForSeverity > 0) {
+				return true;
+			}
 		}
-		filter.put("severity", severityToBreakBuild);
 
-		query.setFilter(filter);
-		query.setPagination(pagination);
-		query.setSort(sort);
-
-		Count count = this.findingDataApi.getFindingsCount(projectId, query);
-
-		if (count.getCount() > 0){
-			return true;
-		} else {
-			return false;
-		}
+		return false;
 	}
 
 	private CodeDxBuildStatistics getBuildStats() throws ApiException {
