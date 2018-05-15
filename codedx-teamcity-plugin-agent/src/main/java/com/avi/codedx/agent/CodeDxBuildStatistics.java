@@ -32,12 +32,13 @@ public class CodeDxBuildStatistics {
 	}
 
 	public int getNumberOfFindingsForGroupAndName(final List<GroupedCount> groupedCounts, String name) {
-		GroupedCount groupedCount = groupedCounts.stream()
-			.filter(gc -> gc.getName().equals(name))
-			.findFirst()
-			.orElse(null);
+		int count = 0;
+		count = groupedCounts.stream()
+			.filter(gc -> gc.getName().contains(name))
+			.mapToInt(gc -> gc.getCount())
+			.sum();
 
-		return groupedCount == null ? 0 : groupedCount.getCount();
+		return count;
 	}
 
 	public int getTotalFindingsForGroup(Group group) {
