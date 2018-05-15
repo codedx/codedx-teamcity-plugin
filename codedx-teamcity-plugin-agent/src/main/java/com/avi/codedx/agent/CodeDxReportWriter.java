@@ -71,7 +71,7 @@ public class CodeDxReportWriter {
 
 		tempHtmlFile.deleteOnExit();
 
-		String linkBack = String.format(LINK_TO_CODEDX, this.url, this.url);
+		String linkBack = String.format(LINK_TO_CODEDX, this.url, "View latest in Code Dx");
 
 		String severityTableRows = makeSeverityTableRows();
 		String severityTable = String.format(STATS_TABLE_BASE, "Severity", severityTableRows);
