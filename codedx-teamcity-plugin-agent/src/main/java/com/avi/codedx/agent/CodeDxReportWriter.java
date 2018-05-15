@@ -100,6 +100,8 @@ public class CodeDxReportWriter {
 
 	private String makeStatusTableRows() {
 		StringBuilder sb = new StringBuilder();
+
+		sb.append(makeRow(Group.STATUS, CodeDxConstants.NEW));
 		sb.append(makeRow(Group.STATUS, CodeDxConstants.FIXED));
 		sb.append(makeRow(Group.STATUS, CodeDxConstants.MITIGATED));
 		sb.append(makeRow(Group.STATUS, CodeDxConstants.IGNORED));
