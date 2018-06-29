@@ -126,6 +126,7 @@ public class CodeDxBuildProcessAdapter extends BuildProcessAdapter {
 			}
 
 			String jobId = this.runAnalysis(analysisPrepId);
+
 			return this.getAnalysisResults(jobId);
 		} catch (Exception e) {
 			BUILD_PROGRESS_LOGGER.error("An error occurred while attempting to run an analysis: " + e.getMessage());
@@ -156,6 +157,11 @@ public class CodeDxBuildProcessAdapter extends BuildProcessAdapter {
 		return hasFinished ? statusCode : BuildFinishedStatus.INTERRUPTED;
 	}
 
+	/**
+	 * Returns a formatted error message to display to the user.
+	 * @param verificationErrors
+	 * @return
+	 */
 	@NotNull
 	private String getVerificationErrorMessage(List<String> verificationErrors) {
 		StringBuilder errorMessage = new StringBuilder();
@@ -167,6 +173,13 @@ public class CodeDxBuildProcessAdapter extends BuildProcessAdapter {
 		return errorMessage.toString();
 	}
 
+	/**
+	 * Upload files to the analysis prep one by one.
+	 * @param files
+	 * @return
+	 * @throws ApiException
+	 * @throws IOException
+	 */
 	private String uploadFiles(List<File> files) throws ApiException, IOException {
 		ProjectId project = this.settings.getProjectId();
 
@@ -181,6 +194,13 @@ public class CodeDxBuildProcessAdapter extends BuildProcessAdapter {
 		return analysisPrepId;
 	}
 
+	/**
+	 * Trigger an analysis. If the user supplied an analysis name, set the analysis name.
+	 * @param analysisPrepId
+	 * @return
+	 * @throws ApiException
+	 * @throws InterruptedException
+	 */
 	private String runAnalysis(String analysisPrepId) throws ApiException, InterruptedException {
 		BUILD_PROGRESS_LOGGER.message("Running Code Dx analysis");
 		Analysis analysis = analysisApi.runPreparedAnalysis(analysisPrepId);
@@ -197,6 +217,14 @@ public class CodeDxBuildProcessAdapter extends BuildProcessAdapter {
 		return analysis.getJobId();
 	}
 
+	/**
+	 * Wait for and process analysis results.
+	 * @param jobId
+	 * @return
+	 * @throws ApiException
+	 * @throws InterruptedException
+	 * @throws IOException
+	 */
 	private BuildFinishedStatus getAnalysisResults(String jobId) throws ApiException, InterruptedException, IOException {
 		boolean waitForAnalysisResults = this.settings.waitForResults();
 
@@ -226,8 +254,8 @@ public class CodeDxBuildProcessAdapter extends BuildProcessAdapter {
 
 		this.statsAfterAnalysis = getBuildStats();
 
+		// If user provides an archive name, create a zip containing an simple html file
 		String archiveName = this.settings.getReportArchiveName();
-
 		if(archiveName != null && !archiveName.isEmpty()) {
 			CodeDxReportWriter reportWriter = new CodeDxReportWriter(archiveName,
 				this.statsBeforeAnalysis,
