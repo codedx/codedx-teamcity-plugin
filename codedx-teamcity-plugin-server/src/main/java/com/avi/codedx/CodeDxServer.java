@@ -13,13 +13,17 @@ import jetbrains.buildServer.web.openapi.WebControllerManager;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.net.ssl.SSLException;
+import javax.net.ssl.SSLHandshakeException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.net.ConnectException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.UnknownHostException;
 
 public class CodeDxServer extends BaseController {
 	private PluginDescriptor myDescriptor;
@@ -59,7 +63,7 @@ public class CodeDxServer extends BaseController {
 		} catch (IllegalArgumentException e){
 			// Bad URL?
 			httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-			httpServletResponse.getOutputStream().print("The URL supplied is invalid");
+			httpServletResponse.getOutputStream().print("Invalid URL");
 		} catch (ApiException e) {
 			// Bad API Token?
 			int responseCode = e.getCode();
@@ -69,10 +73,15 @@ public class CodeDxServer extends BaseController {
 						message = "API token does not have permission to access Code Dx projects";
 						break;
 				case 404:
-						message = "URL not found, please enter a different URL";
+						message = "Unable to retrieve project list. Please check if URL is correct.";
 						break;
 				default:
-						message = getBetterErrorMessage(e);
+						Throwable cause = e.getCause();
+						if (cause != null) {
+							message = getBetterErrorMessage(cause);
+						} else {
+							message = e.getMessage();
+						}
 						break;
 			}
 			responseCode = responseCode == 0 ? 500 : responseCode;
@@ -86,13 +95,15 @@ public class CodeDxServer extends BaseController {
 		return null;
 	}
 
-	private static String getBetterErrorMessage(Throwable e) {
-		String originalMessage = e.getMessage();
-		String betterMessage = originalMessage;
+	private static String getBetterErrorMessage(Throwable cause) {
+		String betterMessage = cause.getMessage();
 
-		if (originalMessage.contains("SSLHandshakeException")) {
+		if (cause instanceof ConnectException)
+			betterMessage = "Connection failed, is the URL/port correct?";
+		else if (cause instanceof SSLHandshakeException)
 			betterMessage = "The SSL Certificate presented by the server is invalid. If this is expected, please input the SHA1 fingerprint in the advanced options";
-		}
+		else if (cause instanceof UnknownHostException)
+			betterMessage = "Unknown host";
 
 		return betterMessage;
 	}

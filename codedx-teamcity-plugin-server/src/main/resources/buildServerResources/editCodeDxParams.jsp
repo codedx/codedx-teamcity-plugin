@@ -244,7 +244,7 @@
 							$urlError.text(jqXHR.responseText);
 							break;
 						default:
-							$serverError.text(jqXHR.responseText);
+							$urlError.text(jqXHR.responseText);
 					}
 					$projects.empty();
 				}

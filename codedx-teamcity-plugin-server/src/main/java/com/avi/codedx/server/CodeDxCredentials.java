@@ -7,6 +7,9 @@ public class CodeDxCredentials {
 	private String fingerprint;
 
 	public void setCodeDxUrl(String codeDxUrl) {
+		if(codeDxUrl.endsWith("/")) {
+			codeDxUrl = codeDxUrl.substring(0, codeDxUrl.length() - 1);
+		}
 		this.codeDxUrl = codeDxUrl;
 	}
 
