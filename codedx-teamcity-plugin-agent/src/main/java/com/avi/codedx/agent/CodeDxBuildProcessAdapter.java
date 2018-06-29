@@ -285,15 +285,34 @@ public class CodeDxBuildProcessAdapter extends BuildProcessAdapter {
 			return false;
 		}
 
+		List<GroupedCount> groupedCounts;
+		if (this.settings.onlyFailOnNewFindings()) {
+			groupedCounts = getNewFindingsGroupedBySeverity();
+		} else {
+			groupedCounts = this.statsAfterAnalysis.getGroupedSeverityCounts();
+		}
+
 		for(int i = severityValueToBreakBuild; i < 6; i++) {
 			String severity = severities.get(i);
-			int numberOfFindingsForSeverity = this.statsAfterAnalysis.getNumberOfFindingsForGroupAndName(CodeDxBuildStatistics.Group.SEVERITY, severity);
+			int numberOfFindingsForSeverity = CodeDxBuildStatistics.getNumberOfFindingsForGroupAndName(groupedCounts, severity);
 			if (numberOfFindingsForSeverity > 0) {
 				return true;
 			}
 		}
 
 		return false;
+	}
+
+	private List<GroupedCount> getNewFindingsGroupedBySeverity() throws ApiException {
+		GroupedCountsRequest request = new GroupedCountsRequest();
+		Filter filter = new Filter();
+
+		filter.put("status", "new");
+		request.setCountBy("severity");
+		request.setFilter(filter);
+
+		List<GroupedCount> newFindingsGrouped = this.findingDataApi.getFindingsGroupCount(this.settings.getProjectId().getProjectId(), request);
+		return newFindingsGrouped;
 	}
 
 	private CodeDxBuildStatistics getBuildStats() throws ApiException {
