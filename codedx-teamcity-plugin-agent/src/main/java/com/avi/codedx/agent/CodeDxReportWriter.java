@@ -2,11 +2,14 @@ package com.avi.codedx.agent;
 
 import com.avi.codedx.common.CodeDxConstants;
 import com.avi.codedx.agent.CodeDxBuildStatistics.Group;
+import io.swagger.client.model.GroupedCount;
 
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -115,8 +118,19 @@ public class CodeDxReportWriter {
 	}
 
 	private String makeRow(Group group, String rowName) {
-		Integer previousNumberOfFindingsForName = statsBeforeAnalysis.getNumberOfFindingsForGroupAndName(group, rowName);
-		Integer currentNumberOfFindingsForName = statsAfterAnalysis.getNumberOfFindingsForGroupAndName(group, rowName);
+		List<GroupedCount> beforeCurrentAnalysis = new ArrayList<>();
+		List<GroupedCount> afterCurrentAnalysis = new ArrayList<>();
+
+		if (group == Group.STATUS) {
+			beforeCurrentAnalysis = this.statsBeforeAnalysis.getGroupedStatusCounts();
+			afterCurrentAnalysis = this.statsAfterAnalysis.getGroupedStatusCounts();
+		} else if (group == Group.SEVERITY) {
+			beforeCurrentAnalysis = this.statsBeforeAnalysis.getGroupedSeverityCounts();
+			afterCurrentAnalysis = this.statsAfterAnalysis.getGroupedSeverityCounts();
+		}
+
+		Integer previousNumberOfFindingsForName = CodeDxBuildStatistics.getNumberOfFindingsForGroupAndName(beforeCurrentAnalysis, rowName);
+		Integer currentNumberOfFindingsForName = CodeDxBuildStatistics.getNumberOfFindingsForGroupAndName(afterCurrentAnalysis, rowName);
 		Integer findingsDelta = currentNumberOfFindingsForName - previousNumberOfFindingsForName;
 
 		return String.format(STATS_TABLE_ROWS_BASE, rowName, currentNumberOfFindingsForName.toString(), findingsDelta.toString());

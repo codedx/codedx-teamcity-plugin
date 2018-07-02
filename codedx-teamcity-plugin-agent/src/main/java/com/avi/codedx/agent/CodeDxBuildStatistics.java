@@ -26,20 +26,11 @@ public class CodeDxBuildStatistics {
 		return groupedStatusCounts;
 	}
 
-	public int getNumberOfFindingsForGroupAndName(final Group group, final String name) {
-		if (name.equals(CodeDxConstants.TOTAL)) {
-			return getTotalFindingsForGroup(group);
-		}
-
-		if (group == Group.SEVERITY){
-			return getNumberOfFindingsForGroupAndName(groupedSeverityCounts, name);
-		} else if (group == Group.STATUS) {
-			return getNumberOfFindingsForGroupAndName(groupedStatusCounts, name);
-		}
-		return 0;
-	}
-
 	public static int getNumberOfFindingsForGroupAndName(final List<GroupedCount> groupedCounts, String name) {
+		if(name.equals(CodeDxConstants.TOTAL)) {
+			return getTotalFindingsForGroup(groupedCounts);
+		}
+
 		int count = 0;
 		count = groupedCounts.stream()
 			.filter(gc -> gc.getName().contains(name))
@@ -49,13 +40,8 @@ public class CodeDxBuildStatistics {
 		return count;
 	}
 
-	public int getTotalFindingsForGroup(Group group) {
-		if (group == Group.SEVERITY) {
-			return groupedSeverityCounts.stream().mapToInt(gc -> gc.getCount()).sum();
-		} else if (group == Group.STATUS) {
-			return groupedStatusCounts.stream().mapToInt(gc -> gc.getCount()).sum();
-		}
-		return 0;
+	public static int getTotalFindingsForGroup(List<GroupedCount> groupedCounts) {
+		return groupedCounts.stream().mapToInt(gc -> gc.getCount()).sum();
 	}
 
 }
