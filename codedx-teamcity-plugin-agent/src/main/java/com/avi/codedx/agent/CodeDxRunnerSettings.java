@@ -54,6 +54,12 @@ class CodeDxRunnerSettings {
 		return project;
 	}
 
+	/***
+	 * Returns a list of files relative to the working directory
+	 * @param workingDirectory
+	 * @return
+	 * @throws IOException
+	 */
 	public List<File> getFilesToUpload(File workingDirectory) throws IOException {
 		ArrayList<File> files = new ArrayList<>();
 		File zip = Archiver.archive(workingDirectory, this.filesToUpload, this.filesToExclude, "SourceAndBinariesZip");
@@ -61,9 +67,9 @@ class CodeDxRunnerSettings {
 
 		if (toolOutputFiles != null) {
 			String[] toolOutputFileNames = this.toolOutputFiles.split(",");
-			for (int i = 0; i < toolOutputFileNames.length; i++) {
-				String filename = toolOutputFileNames[i].trim();
-				files.add(new File(workingDirectory, filename));
+			for (String fileName : toolOutputFileNames) {
+				fileName = fileName.trim();
+				files.add(new File(workingDirectory, fileName));
 			}
 		}
 
