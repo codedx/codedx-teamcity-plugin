@@ -120,17 +120,28 @@ public class CodeDxBuildProcessAdapter extends BuildProcessAdapter {
 					readyToRunAnalysis = true;
 				} else if (inputIds.size() == filesToUpload.size() && !verificationErrors.isEmpty()) {
 					String errorMessage = this.getVerificationErrorMessage(verificationErrors);
+					BUILD_PROGRESS_LOGGER.error(CodeDxConstants.VERIFICATION_ERROR_MESSAGE);
 					BUILD_PROGRESS_LOGGER.error(errorMessage);
 					return BuildFinishedStatus.FINISHED_FAILED;
 				}
 			}
 
 			String jobId = this.runAnalysis(analysisPrepId);
-
 			return this.getAnalysisResults(jobId);
-		} catch (Exception e) {
-			BUILD_PROGRESS_LOGGER.error("An error occurred while attempting to run an analysis: " + e.getMessage());
-			LOG.warnAndDebugDetails("An error occurred while attempting to run an analysis: ", e);
+		} catch (ApiException e) {
+			BUILD_PROGRESS_LOGGER.error(CodeDxConstants.API_ERROR_MESSAGE);
+			BUILD_PROGRESS_LOGGER.error(e.getMessage());
+			LOG.error(CodeDxConstants.API_ERROR_MESSAGE, e);
+			return BuildFinishedStatus.FINISHED_FAILED;
+		} catch (IOException e) {
+			BUILD_PROGRESS_LOGGER.error(CodeDxConstants.IO_ERROR_MESSAGE);
+			BUILD_PROGRESS_LOGGER.error(e.getMessage());
+			LOG.error(CodeDxConstants.IO_ERROR_MESSAGE, e);
+			return BuildFinishedStatus.FINISHED_FAILED;
+		} catch (InterruptedException e) {
+			BUILD_PROGRESS_LOGGER.error(CodeDxConstants.INTERRUPT_ERROR_MESSAGE);
+			BUILD_PROGRESS_LOGGER.error(e.getMessage());
+			LOG.error(CodeDxConstants.INTERRUPT_ERROR_MESSAGE, e);
 			return BuildFinishedStatus.FINISHED_FAILED;
 		}
 	}

@@ -36,4 +36,9 @@ public interface CodeDxConstants {
 
 	String RUNNER_DISPLAY_NAME = "Code Dx";
 	String RUNNER_DESCRIPTION = "Code Dx analysis runner";
+
+	String API_ERROR_MESSAGE = "An error occurred while trying to communicate with Code Dx's API";
+	String IO_ERROR_MESSAGE = "An error occurred while working with files";
+	String INTERRUPT_ERROR_MESSAGE = "An error caused the Code Dx build step to be interrupted";
+	String VERIFICATION_ERROR_MESSAGE = "There are verification errors and an analysis could not be triggered.";
 }
