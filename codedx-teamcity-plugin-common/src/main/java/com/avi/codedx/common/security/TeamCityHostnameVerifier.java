@@ -1,7 +1,6 @@
 package com.avi.codedx.common.security;
 
 import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.SSLException;
 import javax.net.ssl.SSLSession;
 import java.util.Set;
 
