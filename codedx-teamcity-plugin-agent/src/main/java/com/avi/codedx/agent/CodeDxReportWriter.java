@@ -39,20 +39,22 @@ public class CodeDxReportWriter {
 	}
 
 	public void writeReport(File workspace) throws IOException {
-		Path workspacePath = Paths.get(workspace.getCanonicalPath());
-		File reportZip = createReportZip(workspacePath);
+		try {
+			Path workspacePath = Paths.get(workspace.getCanonicalPath());
+			File reportZip = createReportZip(workspacePath);
 
-		try (ZipOutputStream zout = new ZipOutputStream(new FileOutputStream(reportZip))) {
-			File reportHtml = createHtmlReport();
-			ZipEntry reportEntry = new ZipEntry(REPORT_FILE_NAME);
-			zout.putNextEntry(reportEntry);
+			try (ZipOutputStream zout = new ZipOutputStream(new FileOutputStream(reportZip))) {
+				File reportHtml = createHtmlReport();
+				ZipEntry reportEntry = new ZipEntry(REPORT_FILE_NAME);
+				zout.putNextEntry(reportEntry);
 
-			try (FileInputStream fis = new FileInputStream(reportHtml)) {
-				Archiver.addFileToZip(zout, fis);
+				try (FileInputStream fis = new FileInputStream(reportHtml)) {
+					Archiver.addFileToZip(zout, fis);
+				}
 			}
-			zout.close();
+		} catch (IOException e) {
+			throw new IOException("An error occurred while attempting to create the report file", e);
 		}
-
 	}
 
 	private File createReportZip(Path workspacePath) throws IOException {
@@ -69,11 +71,6 @@ public class CodeDxReportWriter {
 	}
 
 	private File createHtmlReport() throws IOException {
-		File tempHtmlFile = Files.createTempFile("", ".html").toFile();
-		BufferedWriter bw = new BufferedWriter(new FileWriter(tempHtmlFile));
-
-		tempHtmlFile.deleteOnExit();
-
 		String linkBack = String.format(LINK_TO_CODEDX, this.url, "View latest in Code Dx");
 
 		String severityTableRows = makeSeverityTableRows();
@@ -84,8 +81,12 @@ public class CodeDxReportWriter {
 
 		String html = String.format(HTML_BASE, CSS, linkBack + severityTable + statusTable);
 
-		bw.write(html);
-		bw.close();
+		File tempHtmlFile = Files.createTempFile("", ".html").toFile();
+		tempHtmlFile.deleteOnExit();
+
+		try (BufferedWriter bw = new BufferedWriter(new FileWriter(tempHtmlFile))){
+			bw.write(html);
+		}
 		return tempHtmlFile;
 	}
 
