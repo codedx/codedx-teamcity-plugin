@@ -91,12 +91,12 @@ public class CodeDxReportWriter {
 
 	private String makeSeverityTableRows() {
 		StringBuilder sb = new StringBuilder();
-		sb.append(makeRow(Group.SEVERITY, CodeDxConstants.CRITICAL));
-		sb.append(makeRow(Group.SEVERITY, CodeDxConstants.HIGH));
-		sb.append(makeRow(Group.SEVERITY, CodeDxConstants.MEDIUM));
-		sb.append(makeRow(Group.SEVERITY, CodeDxConstants.LOW));
-		sb.append(makeRow(Group.SEVERITY, CodeDxConstants.INFO));
-		sb.append(makeRow(Group.SEVERITY, CodeDxConstants.TOTAL));
+		sb.append(makeRow(Group.SEVERITY, CodeDxConstants.CRITICAL))
+			.append(makeRow(Group.SEVERITY, CodeDxConstants.HIGH))
+			.append(makeRow(Group.SEVERITY, CodeDxConstants.MEDIUM))
+			.append(makeRow(Group.SEVERITY, CodeDxConstants.LOW))
+			.append(makeRow(Group.SEVERITY, CodeDxConstants.INFO))
+			.append(makeRow(Group.SEVERITY, CodeDxConstants.TOTAL));
 
 		return sb.toString();
 	}
@@ -104,15 +104,15 @@ public class CodeDxReportWriter {
 	private String makeStatusTableRows() {
 		StringBuilder sb = new StringBuilder();
 
-		sb.append(makeRow(Group.STATUS, CodeDxConstants.NEW));
-		sb.append(makeRow(Group.STATUS, CodeDxConstants.FIXED));
-		sb.append(makeRow(Group.STATUS, CodeDxConstants.MITIGATED));
-		sb.append(makeRow(Group.STATUS, CodeDxConstants.IGNORED));
-		sb.append(makeRow(Group.STATUS, CodeDxConstants.FALSE_POSITIVE));
-		sb.append(makeRow(Group.STATUS, CodeDxConstants.UNRESOLVED));
-		sb.append(makeRow(Group.STATUS, CodeDxConstants.ESCALATED));
-		sb.append(makeRow(Group.STATUS, CodeDxConstants.ASSIGNED));
-		sb.append(makeRow(Group.STATUS, CodeDxConstants.TOTAL));
+		sb.append(makeRow(Group.STATUS, CodeDxConstants.NEW))
+			.append(makeRow(Group.STATUS, CodeDxConstants.FIXED))
+			.append(makeRow(Group.STATUS, CodeDxConstants.MITIGATED))
+			.append(makeRow(Group.STATUS, CodeDxConstants.IGNORED))
+			.append(makeRow(Group.STATUS, CodeDxConstants.FALSE_POSITIVE))
+			.append(makeRow(Group.STATUS, CodeDxConstants.UNRESOLVED))
+			.append(makeRow(Group.STATUS, CodeDxConstants.ESCALATED))
+			.append(makeRow(Group.STATUS, CodeDxConstants.ASSIGNED))
+			.append(makeRow(Group.STATUS, CodeDxConstants.TOTAL));
 
 		return sb.toString();
 	}
