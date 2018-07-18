@@ -255,10 +255,19 @@ public class CodeDxBuildProcessAdapter extends BuildProcessAdapter {
 			Job job = jobsApi.getJobStatus(jobId);
 			JobStatus status = job.getStatus();
 
+			BUILD_PROGRESS_LOGGER.progressMessage(status.toString());
+
 			if (status == JobStatus.COMPLETED) {
 				isAnalysisFinished = true;
-			} else if(status == JobStatus.FAILED) {
-				BUILD_PROGRESS_LOGGER.error("The Code Dx analysis has reported a failure");
+			} else if (status != JobStatus.RUNNING && status != JobStatus.QUEUED) {
+				switch (status) {
+					case FAILED:
+						BUILD_PROGRESS_LOGGER.error("The Code Dx analysis has reported a failure");
+						break;
+					case CANCELLED:
+						BUILD_PROGRESS_LOGGER.error("The Code Dx analysis was cancelled");
+						break;
+				}
 				return BuildFinishedStatus.FINISHED_WITH_PROBLEMS;
 			}
 		}
