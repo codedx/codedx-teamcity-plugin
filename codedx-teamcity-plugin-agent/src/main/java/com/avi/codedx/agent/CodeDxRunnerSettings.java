@@ -2,6 +2,7 @@ package com.avi.codedx.agent;
 
 import com.avi.codedx.common.CodeDxConstants;
 import io.swagger.client.model.ProjectId;
+import jetbrains.buildServer.agent.BuildProgressLogger;
 
 import java.io.File;
 import java.io.IOException;
@@ -62,7 +63,7 @@ class CodeDxRunnerSettings {
 	 * @return
 	 * @throws IOException
 	 */
-	public List<File> getFilesToUpload(File workingDirectory) throws IOException {
+	public List<File> getFilesToUpload(File workingDirectory, BuildProgressLogger logger) throws IOException {
 		ArrayList<File> files = new ArrayList<>();
 		File zip = Archiver.archive(workingDirectory, this.filesToUpload, this.filesToExclude, "SourceAndBinariesZip");
 		files.add(zip);
@@ -74,7 +75,11 @@ class CodeDxRunnerSettings {
 				fileName = fileName.trim();
 				Path path = Paths.get(fileName);
 				file = path.isAbsolute() ? path.toFile() : new File(workingDirectory, fileName);
-				files.add(file);
+				if (file.exists()) {
+					files.add(file);
+				} else {
+					logger.warning("File: " + file.getCanonicalPath() + " does not exist. Skipping...");
+				}
 			}
 		}
 

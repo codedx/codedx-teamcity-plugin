@@ -102,7 +102,7 @@ public class CodeDxBuildProcessAdapter extends BuildProcessAdapter {
 	protected BuildFinishedStatus runProcess() {
 		try{
 			boolean readyToRunAnalysis = false;
-			List<File> filesToUpload = this.settings.getFilesToUpload(context.getWorkingDirectory());
+			List<File> filesToUpload = this.settings.getFilesToUpload(context.getWorkingDirectory(), BUILD_PROGRESS_LOGGER);
 
 			this.statsBeforeAnalysis = getBuildStats();
 
@@ -198,8 +198,11 @@ public class CodeDxBuildProcessAdapter extends BuildProcessAdapter {
 		String analysisPrepId = analysisPrep.getPrepId();
 
 		for (File file : files) {
-			BUILD_PROGRESS_LOGGER.message("Uploading file: " + file.getCanonicalPath());
-			analysisApi.uploadFile(analysisPrepId, file, null);
+			String filename = file.getCanonicalPath();
+			if (file.exists()) {
+				BUILD_PROGRESS_LOGGER.message("Uploading file: " + filename);
+				analysisApi.uploadFile(analysisPrepId, file, null);
+			}
 		}
 
 		return analysisPrepId;
@@ -256,7 +259,7 @@ public class CodeDxBuildProcessAdapter extends BuildProcessAdapter {
 			Job job = jobsApi.getJobStatus(jobId);
 			JobStatus status = job.getStatus();
 
-			BUILD_PROGRESS_LOGGER.progressMessage(status.toString());
+			BUILD_PROGRESS_LOGGER.progressMessage("Code Dx analysis status: " + status.toString());
 
 			if (status == JobStatus.COMPLETED) {
 				isAnalysisFinished = true;
