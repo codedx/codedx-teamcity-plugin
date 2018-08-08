@@ -7,6 +7,8 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -68,8 +70,11 @@ class CodeDxRunnerSettings {
 		if (toolOutputFiles != null) {
 			String[] toolOutputFileNames = this.toolOutputFiles.split(",");
 			for (String fileName : toolOutputFileNames) {
+				File file;
 				fileName = fileName.trim();
-				files.add(new File(workingDirectory, fileName));
+				Path path = Paths.get(fileName);
+				file = path.isAbsolute() ? path.toFile() : new File(workingDirectory, fileName);
+				files.add(file);
 			}
 		}
 

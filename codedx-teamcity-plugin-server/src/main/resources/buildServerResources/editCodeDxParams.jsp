@@ -89,7 +89,7 @@
 		<td>
 			<span>
 				<props:textProperty name="${constants.toolOutputFilesKey}" className="longField"></props:textProperty>
-				<span class="smallNote">Files relative to the working directory (not source or binaries). Separate multiple files with a comma (,)</span>
+				<span class="smallNote">File paths can be absolute or relative to the working directory. Separate multiple files with a comma (,)</span>
 			</span>
 		</td>
 	</tr>
