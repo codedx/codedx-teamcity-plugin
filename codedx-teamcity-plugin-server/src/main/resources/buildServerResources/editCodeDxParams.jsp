@@ -56,6 +56,7 @@
 				<props:displayValue name="${constants.codeDxProjectKey}"/>
 			</div>
 				<props:selectProperty name="${constants.codeDxProjectKey}" className="mediumField" enableFilter="true"></props:selectProperty>
+				<button id="reload" type="button">Reload</button>
 			</span>
 		</td>
 	</tr>
@@ -66,8 +67,8 @@
 		<td>
 			<span>
 				<props:textProperty name="${constants.filesKey}" className="longField"></props:textProperty>
-				<span class="smallNote">Files relative to the working directory to zip and upload to Code Dx. Separate multiple files with a comma (,)</span>
 			</span>
+			<span class="smallNote">Files relative to the working directory to zip and upload to Code Dx. Separate multiple files with a comma (,)</span>
 		</td>
 	</tr>
 	<tr class="advancedSetting">
@@ -256,6 +257,7 @@
 			var $url = $j(BS.Util.escapeId('${constants.codeDxUrlKey}'));
 			var $apiToken = $j(BS.Util.escapeId('${constants.codeDxAPITokenKey}'));
 			var $fingerprint = $j(BS.Util.escapeId('${constants.sha1FingerprintKey}'));
+			var $reload = $('reload');
 
 			$('${constants.reportArchiveNameKey}').disabled = !isWaitForResults;
 			$('${constants.codeDxSeverityKey}').disabled = !isWaitForResults;
@@ -269,6 +271,7 @@
 			$url.on('input', function() { getCodeDxProjects(false) });
 			$apiToken.on('input', function() { getCodeDxProjects(false) });
 			$fingerprint.on('input', function() { getCodeDxProjects(false) });
+			$reload.on('click', function() { getCodeDxProjects(false) });
 		});
 	</script>
 </l:settingsGroup>
