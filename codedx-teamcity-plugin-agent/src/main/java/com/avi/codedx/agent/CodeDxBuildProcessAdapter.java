@@ -215,14 +215,15 @@ public class CodeDxBuildProcessAdapter extends BuildProcessAdapter {
 	private String runAnalysis(String analysisPrepId) throws ApiException, InterruptedException {
 		BUILD_PROGRESS_LOGGER.message("Running Code Dx analysis");
 		Analysis analysis = analysisApi.runPreparedAnalysis(analysisPrepId);
+		String analysisName = this.settings.getAnalysisName();
 
-		if (!settings.getAnalysisName().isEmpty()) {
+		if (analysisName != null && !analysisName.isEmpty()) {
 			int projectId = this.settings.getProjectId().getProjectId();
 			int analysisId = analysis.getAnalysisId();
-			AnalysisName analysisName = new AnalysisName();
-			analysisName.setName(this.settings.getAnalysisName());
+			AnalysisName an = new AnalysisName();
+			an.setName(this.settings.getAnalysisName());
 
-			analysisApi.setAnalysisName(projectId, analysisId, analysisName);
+			analysisApi.setAnalysisName(projectId, analysisId, an);
 		}
 
 		return analysis.getJobId();
