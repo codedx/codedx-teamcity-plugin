@@ -55,7 +55,7 @@
 			<div id="selected-project-id" class="hidden">
 				<props:displayValue name="${constants.codeDxProjectKey}"/>
 			</div>
-				<props:selectProperty name="${constants.codeDxProjectKey}" className="mediumField" enableFilter="true"></props:selectProperty>
+				<props:selectProperty name="${constants.codeDxProjectKey}" className="longField" enableFilter="true"></props:selectProperty>
 				<button id="reload" type="button">Reload</button>
 			</span>
 		</td>
