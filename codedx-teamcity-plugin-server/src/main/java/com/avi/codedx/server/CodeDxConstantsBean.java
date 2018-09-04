@@ -73,4 +73,14 @@ public class CodeDxConstantsBean {
 	public String getReportArchiveNameKey() {
 		return CodeDxConstants.SETTINGS_REPORT_ARCHIVE_NAME_KEY;
 	}
+
+	@NotNull
+	public String getSourceAndBinariesWarningKey() {
+		return CodeDxConstants.SETTINGS_SOURCE_AND_BINARIES_WARNING_KEY;
+	}
+
+	@NotNull
+	public String getToolOutputsWarningKey() {
+		return CodeDxConstants.SETTINGS_TOOL_OUTPUTS_WARNING_KEY;
+	}
 }

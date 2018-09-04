@@ -17,6 +17,8 @@ public final class CodeDxConstants {
 	public static final String SETTINGS_SHA1_FINGERPRINT_KEY = "codedx.sha1Fingerprint";
 	public static final String SETTINGS_WAIT_FOR_RESULTS_KEY = "codedx.waitForResults";
 	public static final String SETTINGS_REPORT_ARCHIVE_NAME_KEY = "codedx.reportArchiveName";
+	public static final String SETTINGS_SOURCE_AND_BINARIES_WARNING_KEY = "codedx.sourceAndBinariesWarning";
+	public static final String SETTINGS_TOOL_OUTPUTS_WARNING_KEY = "codedx.toolOutputsWarning";
 
 	public static final String CRITICAL = "Critical";
 	public static final String HIGH = "High";

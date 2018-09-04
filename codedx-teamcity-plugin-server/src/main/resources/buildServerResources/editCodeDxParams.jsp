@@ -67,8 +67,11 @@
 		<td>
 			<span>
 				<props:textProperty name="${constants.filesKey}" className="longField"></props:textProperty>
+				<span class="smallNote">Files relative to the working directory to zip and upload to Code Dx. Separate multiple files with a comma (,)</span>
 			</span>
-			<span class="smallNote">Files relative to the working directory to zip and upload to Code Dx. Separate multiple files with a comma (,)</span>
+			<span>
+				<span class="error" id="${constants.sourceAndBinariesWarningKey}">Warning: No source and binaries specified</span>
+			</span>
 		</td>
 	</tr>
 	<tr class="advancedSetting">
@@ -90,6 +93,9 @@
 			<span>
 				<props:textProperty name="${constants.toolOutputFilesKey}" className="longField"></props:textProperty>
 				<span class="smallNote">File paths can be absolute or relative to the working directory. Separate multiple files with a comma (,)</span>
+			</span>
+			<span>
+				<span class="error" id="${constants.toolOutputsWarningKey}">Warning: No tool output files specified</span>
 			</span>
 		</td>
 	</tr>
@@ -252,12 +258,25 @@
 			});
 		}
 
+		function displayFileWarning($textBox, $warningLabel) {
+			var textValue = BS.Util.trimSpaces($textBox.val());
+			if(textValue) {
+				$warningLabel.hide();
+			} else {
+				$warningLabel.show();
+			}
+		}
+
 		$j(function() {
 			var isWaitForResults = $('codedx.waitForResults').checked;
 			var $url = $j(BS.Util.escapeId('${constants.codeDxUrlKey}'));
 			var $apiToken = $j(BS.Util.escapeId('${constants.codeDxAPITokenKey}'));
 			var $fingerprint = $j(BS.Util.escapeId('${constants.sha1FingerprintKey}'));
 			var $reload = $('reload');
+			var $sourceAndBinaries = $j(BS.Util.escapeId('${constants.filesKey}'));
+			var $toolOutputs = $j(BS.Util.escapeId('${constants.toolOutputFilesKey}'));
+			var $sourceAndBinariesWarning = $j(BS.Util.escapeId('${constants.sourceAndBinariesWarningKey}'));
+			var $toolOutputsWarning = $j(BS.Util.escapeId('${constants.toolOutputsWarningKey}'));
 
 			$('${constants.reportArchiveNameKey}').disabled = !isWaitForResults;
 			$('${constants.codeDxSeverityKey}').disabled = !isWaitForResults;
@@ -272,6 +291,13 @@
 			$apiToken.on('input', function() { getCodeDxProjects(false) });
 			$fingerprint.on('input', function() { getCodeDxProjects(false) });
 			$reload.on('click', function() { getCodeDxProjects(false) });
+			$sourceAndBinaries.on('input', function() { displayFileWarning($sourceAndBinaries, $sourceAndBinariesWarning) });
+			$toolOutputs.on('input', function() { displayFileWarning($toolOutputs, $toolOutputsWarning) });
+
+			setTimeout(function() {
+				$sourceAndBinaries.trigger('input');
+				$toolOutputs.trigger('input');
+			}, 1000);
 		});
 	</script>
 </l:settingsGroup>
