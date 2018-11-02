@@ -9,8 +9,7 @@
     <email>Plugin author e-mail</email>
     <vendor>
       <name>Code Dx</name>
-      <codeDxUrl>www.codedx.com</codeDxUrl>
-      <vendorUrl>www.codedx.com</vendorUrl>
+      <url>https://www.codedx.com</url>
       <logo>https://codedx.com/wp-content/uploads/2017/03/CodeDx-logo.png</logo>
     </vendor>
   </info>
