@@ -1,7 +1,7 @@
 package com.avi.codedx.agent;
 
 import com.avi.codedx.common.CodeDxConstants;
-import io.swagger.client.model.GroupedCount;
+import com.codedx.client.model.GroupedCount;
 import java.util.List;
 
 public class CodeDxBuildStatistics {

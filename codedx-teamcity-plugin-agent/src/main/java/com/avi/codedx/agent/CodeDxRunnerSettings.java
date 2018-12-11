@@ -1,7 +1,7 @@
 package com.avi.codedx.agent;
 
 import com.avi.codedx.common.CodeDxConstants;
-import io.swagger.client.model.ProjectId;
+import com.codedx.client.model.ProjectId;
 import jetbrains.buildServer.agent.BuildProgressLogger;
 
 import java.io.File;

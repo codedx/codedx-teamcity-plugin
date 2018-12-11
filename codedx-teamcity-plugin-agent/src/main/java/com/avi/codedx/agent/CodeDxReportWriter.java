@@ -2,7 +2,7 @@ package com.avi.codedx.agent;
 
 import com.avi.codedx.common.CodeDxConstants;
 import com.avi.codedx.agent.CodeDxBuildStatistics.Group;
-import io.swagger.client.model.GroupedCount;
+import com.codedx.client.model.GroupedCount;
 
 import java.io.*;
 import java.nio.file.Files;

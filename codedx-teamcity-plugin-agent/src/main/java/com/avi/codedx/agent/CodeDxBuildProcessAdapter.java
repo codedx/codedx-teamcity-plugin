@@ -4,12 +4,12 @@ import com.avi.codedx.common.CodeDxConstants;
 import com.avi.codedx.common.security.SSLSocketFactoryFactory;
 import com.avi.codedx.common.security.TeamCityHostnameVerifierFactory;
 import com.intellij.openapi.diagnostic.Logger;
-import io.swagger.client.ApiClient;
-import io.swagger.client.ApiException;
-import io.swagger.client.api.AnalysisApi;
-import io.swagger.client.api.FindingDataApi;
-import io.swagger.client.api.JobsApi;
-import io.swagger.client.model.*;
+import com.codedx.client.ApiClient;
+import com.codedx.client.ApiException;
+import com.codedx.client.api.AnalysisApi;
+import com.codedx.client.api.FindingDataApi;
+import com.codedx.client.api.JobsApi;
+import com.codedx.client.model.*;
 import jetbrains.buildServer.RunBuildException;
 import jetbrains.buildServer.agent.BuildFinishedStatus;
 import jetbrains.buildServer.agent.BuildProcessAdapter;
@@ -270,6 +270,8 @@ public class CodeDxBuildProcessAdapter extends BuildProcessAdapter {
 						break;
 					case CANCELLED:
 						BUILD_PROGRESS_LOGGER.error("The Code Dx analysis was cancelled");
+						break;
+					default:
 						break;
 				}
 				return BuildFinishedStatus.FINISHED_WITH_PROBLEMS;
