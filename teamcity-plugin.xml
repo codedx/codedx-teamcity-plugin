@@ -6,7 +6,7 @@
     <version>@Version@</version>
     <description>Allows users to integrate TeamCity with Code Dx</description>
     <download-codeDxUrl>https://github.com/codedx/codedx-teamcity-plugin</download-codeDxUrl>
-    <email>Plugin author e-mail</email>
+    <email>support@codedx.com</email>
     <vendor>
       <name>Code Dx</name>
       <url>https://www.codedx.com</url>
