@@ -4,7 +4,7 @@
   <parent>
     <artifactId>codedx-teamcity-plugin</artifactId>
     <groupId>com.avi.codedx</groupId>
-    <version>1.0-SNAPSHOT</version>
+    <version>3.5.0</version>
   </parent>
   <artifactId>codedx-teamcity-plugin-agent</artifactId>
   <packaging>jar</packaging>
@@ -13,7 +13,7 @@
     <dependency>
       <groupId>com.avi.codedx</groupId>
       <artifactId>codedx-teamcity-plugin-common</artifactId>
-      <version>1.0-SNAPSHOT</version>
+      <version>3.5.0</version>
       <scope>compile</scope>
     </dependency>
 
