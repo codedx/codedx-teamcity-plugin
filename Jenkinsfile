@@ -16,7 +16,7 @@ pipeline {
 			}
 			post {
 				success {
-					archive 'target/codedx-teamcity-plugin.jar'
+					archiveArtifacts artifacts: 'target/codedx-teamcity-plugin.jar'
 				}
 			}
 		}
