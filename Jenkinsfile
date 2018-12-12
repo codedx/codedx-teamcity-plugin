@@ -6,11 +6,15 @@ pipeline {
 	stages {
 		stage ('Build') {
 			steps {
-				bat 'mvn -Dmaven.test.failure.ignore=true package'
+				if (isUnix()) {
+					sh 'mvn -Dmaven.test.failure.ignore=true package'
+				} else {
+					bat 'mvn -Dmaven.test.failure.ignore=true package'
+				}
 			}
 			post {
 				success {
-					archive 'target/*.jar'
+					archive 'target/codedx-teamcity-plugin.jar'
 				}
 			}
 		}
