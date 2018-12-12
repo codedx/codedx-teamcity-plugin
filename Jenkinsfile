@@ -6,10 +6,12 @@ pipeline {
 	stages {
 		stage ('Build') {
 			steps {
-				if (isUnix()) {
-					sh 'mvn -Dmaven.test.failure.ignore=true package'
-				} else {
-					bat 'mvn -Dmaven.test.failure.ignore=true package'
+				script {
+					if (isUnix()) {
+						sh 'mvn -Dmaven.test.failure.ignore=true package'
+					} else {
+						bat 'mvn -Dmaven.test.failure.ignore=true package'
+					}
 				}
 			}
 			post {
