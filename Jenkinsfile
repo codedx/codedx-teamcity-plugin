@@ -2,7 +2,7 @@ pipeline {
 	agent any
 
 	parameters {
-		stringParam(defaultValue: '', description: 'Leave this blank for snapshot builds', name: 'RELEASE_VERSION')
+		string(defaultValue: '', description: 'Leave this blank for snapshot builds', name: 'RELEASE_VERSION')
 	}
 
 	tools {
