@@ -1,8 +1,14 @@
 pipeline {
 	agent any
+
+	parameters {
+		stringParam(defaultValue: '', description: 'Leave this blank for snapshot builds', name: 'RELEASE_VERSION')
+	}
+
 	tools {
 		jdk 'jdk8'
 	}
+
 	stages {
 		stage ('Build') {
 			steps {
