@@ -3,7 +3,7 @@
   <info>
     <name>codedx-teamcity-plugin</name>
     <display-name>Code Dx</display-name>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
     <description>Allows users to integrate TeamCity with Code Dx</description>
     <download-codeDxUrl>https://github.com/codedx/codedx-teamcity-plugin</download-codeDxUrl>
     <email>support@codedx.com</email>

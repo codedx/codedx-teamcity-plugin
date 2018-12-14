@@ -4,7 +4,7 @@
   <parent>
     <artifactId>codedx-teamcity-plugin</artifactId>
     <groupId>com.avi.codedx</groupId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
   </parent>
   <artifactId>codedx-teamcity-plugin-common</artifactId>
   <packaging>jar</packaging>
