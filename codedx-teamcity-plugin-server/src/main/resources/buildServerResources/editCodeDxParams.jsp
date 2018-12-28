@@ -5,7 +5,7 @@
 <%@ taglib prefix="bs" tagdir="/WEB-INF/tags" %>
 
 <jsp:useBean id="propertiesBean" scope="request" type="jetbrains.buildServer.controllers.BasePropertiesBean"/>
-<jsp:useBean id="constants" class="com.avi.codedx.server.CodeDxConstantsBean"/>
+<jsp:useBean id="constants" class="com.codedx.server.CodeDxConstantsBean"/>
 
 <l:settingsGroup title="Code Dx Configuration">
 	<tr>
