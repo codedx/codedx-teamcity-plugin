@@ -18,7 +18,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.codedx</groupId>
   <artifactId>codedx-teamcity-plugin</artifactId>
-  <version>1.0.1</version>
+  <version>1.0.2-SNAPSHOT</version>
   <packaging>pom</packaging>
   <properties>
       <teamcity-version>10.0</teamcity-version>
@@ -72,7 +72,7 @@
       <dependency>
           <groupId>com.codedx</groupId>
           <artifactId>codedx-api-client-java</artifactId>
-          <version>3.5.0</version>
+          <version>3.5.1-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>io.swagger</groupId>
