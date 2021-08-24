@@ -16,6 +16,4 @@
     
     To install the plugin, put zip archive to 'plugins' dir under TeamCity data directory. If you only changed agent-side code of your plugin, the upgrade will be perfomed 'on the fly' (agents will upgrade when idle). If common or server-side code has changed, restart the server.
 
- To build the project, lib/swagger-java-client.jar needs to be added to your local maven repo. From the project root, issue this command: 
- 
-    mvn install:install-file -Dfile=lib/swagger-java-client.jar -DgroupId=io.swagger.client -DartifactId=swagger-java-client -Dversion=3.0.x -Dpackaging=jar
+The `lib/` folder is treated as Maven repository so that the jar file doesn't need to be manually published.
