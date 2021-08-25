@@ -26,13 +26,13 @@
   <repositories>
     <repository>
         <id>JetBrains</id>
-        <url>http://repository.jetbrains.com/all</url>
+        <url>https://download.jetbrains.com/teamcity-repository</url>
     </repository>
   </repositories>
   <pluginRepositories>
       <pluginRepository>
           <id>JetBrains</id>
-          <url>http://repository.jetbrains.com/all</url>
+          <url>https://download.jetbrains.com/teamcity-repository</url>
       </pluginRepository>
   </pluginRepositories>
   <build>
@@ -72,7 +72,7 @@
       <dependency>
           <groupId>com.codedx</groupId>
           <artifactId>codedx-api-client-java</artifactId>
-          <version>3.5.1-SNAPSHOT</version>
+          <version>3.5.0</version>
       </dependency>
       <dependency>
         <groupId>io.swagger</groupId>
