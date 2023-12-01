@@ -19,12 +19,4 @@ pipeline {
 			}
 		}
 	}
-
-	post {
-		failure {
-			script {
-				slack.error 'TeamCity Plugin build FAILED'
-			}
-		}
-	}
 }
